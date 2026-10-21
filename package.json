@@ -1,0 +1,25 @@
+{
+  "name": "driving-school-management-system",
+  "version": "1.0.0",
+  "description": "Driving School Management System - Capstone Project for COCSIT Latur, SRTMUN",
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "server:start": "npm --prefix server start",
+    "client": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "db:test": "npm --prefix server run test:db",
+    "db:migrate": "npm --prefix server run migrate",
+    "db:seed": "node server/scripts/seed-data.js"
+  },
+  "keywords": [
+    "capstone-project",
+    "bca",
+    "driving-school-management",
+    "react",
+    "nodejs",
+    "mysql",
+    "tidb-cloud"
+  ],
+  "author": "Radheya Bharat Khandelwal",
+  "license": "ISC"
+}

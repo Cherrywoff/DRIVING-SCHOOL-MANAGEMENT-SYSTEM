@@ -1,0 +1,26 @@
+{
+  "name": "driving-school-server",
+  "version": "1.0.0",
+  "description": "Backend REST API for Driving School Management System",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test:db": "node scripts/test-db-connection.js",
+    "migrate": "node migrations/run-migrations.js",
+    "seed": "scripts/seed-data.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.12.0",
+    "pdfkit": "^0.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

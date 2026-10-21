@@ -1,0 +1,131 @@
+
+Logo	Royal Education Society's
+संगणकशास्त्र व माहितीतंत्रज्ञान महाविद्यालय, लातूर (स्वायत्त)
+College of Computer Science and Information Technology, Latur (AUTONOMOUS)
+Affiliated to Swami Ramanand Teerth Marathwada University, Nanded.
+Re-Accredited by NAAC with B+ Grade | AISHE Code : C-7398
+Admin Login   
+Home About Administration Admission Academics Feedback TPC IQAC Contact UGC Public Self Disclosure
+Academic Software Project Guidelines
+Home Academic Software Project Guidelines
+Complete Guidelines for Final Year UG & PG Students
+🎯 Project Allocation Process
+Step 1: Departmental In-Charge allocates project titles and faculty guides based on student preferences, academic merit, and resource availability. This ensures fair distribution across all divisions.
+
+Step 2: Students form groups of 1-3 members maximum from the same division only. Mixed-division groups are not permitted to maintain academic integrity and evaluation fairness.
+
+Step 3: Once allocated, project topic and guide cannot be changed under any circumstances throughout the semester. This policy ensures commitment and focused development.
+
+📋 Departmental Project In-Charges
+Department	Project In-Charge	Hall No	Class
+Department of Computer Science	Ms. Mohini Bidve	116	B.Sc. (CS) and M.Sc. (CS)
+Department of Computer Application	Mr. Madhav Rajegave	108	BCA, BSc (NT), MCA
+Department of Information Technology	Mr. Ravi Ladge	118 A	BSc (IT) and BSc (CM)
+Department of Software Engineering	Mr. Yashpal Tadgure	318 B	BSc (SE) and MSc (SE)
+Department of Data Science	Mr. S. S. Shaikh	418 A	BSc (DS) and MSc (DS)
+Department of Software Development	Ms. Shubhali S. Kshirsager	418 B	BSc (SD), B.Voc. (PSSD)
+⚖️ Complete Project Regulations
+● Group Formation: 1-3 students from same division only. Individual projects allowed.
+● Topic Allocation: Final decision by Departmental In-Charge. No changes permitted after allotment.
+● Guide Assignment: One primary guide per group. Regular meetings mandatory (minimum weekly).
+● Plagiarism Policy: Zero tolerance. All code, content, and designs must be original. Similarity above 15% leads to rejection.
+● Demo Requirements: Working prototype mandatory for all evaluations. Screenshots insufficient.
+● Documentation: Complete SDLC documentation required (SRS, DFDs, ER Diagrams, Test Cases).
+● Technology Stack: Modern technologies preferred (.NET Core, Python Django/Flask, React, Node.js, MySQL/PostgreSQL).
+🚫 STRICTLY PROHIBITED
+● Fake/Fabricated Projects: Non-functional applications, copied GitHub repos, screenshot-based demos.
+● Paid Projects: Outsourcing development strictly banned. Academic dishonesty penalty applies.
+● Template Copying: Direct replication of existing projects without significant modifications.
+● Group Changes: No member additions/removals after official group formation.
+● Penalty: Zero marks, academic warning, potential course failure for violations.
+
+🏆 Standard Project Requirements
+Your project is your professional portfolio. Create a production-ready application that demonstrates mastery of full-stack development, database design, and software engineering principles. Aim for industry standards that you can showcase in placements.
+
+📊 Mandatory Technical Components
+● Database: Relational database (MySQL/PostgreSQL/SQL Server) with minimum 5 related tables
+● Connectivity: Full CRUD operations through stored procedures/views preferred
+● Authentication: User login/register with role-based access (Admin/User)
+● Frontend: Responsive design (Bootstrap/Tailwind CSS)
+● Backend: RESTful APIs or MVC architecture
+● Reporting: PDF/Excel generation capability
+● Deployment: Deployed on cloud/local server with live demo URL
+🔄 Recommended SDLC Models
+● Waterfall Model: Best for well-defined requirements (traditional approach)
+● Agile/Scrum: Iterative development with sprints (industry standard)
+● Spiral Model: Risk-driven approach for complex projects
+📥 UG Synopsis Format Downloads
+📄 UG Project Synopsis Template
+● 10-15 pages approx comprehensive format
+📥 UG Project Synopsis Format
+📚 UG Final Project Report Template
+● 40-above pages approx complete structure
+📥 UG Project Report Format
+📥 PG Report Format Download
+📄 PG Project Synopsis Template
+● 10-15 pages approx comprehensive format
+📥 PG Project Synopsis Format
+📚 PG Final Project Report Template
+● 40-above pages approx complete structure
+📥 PG Project Report Format
+⏰ Complete Project Timeline
+Phase-I
+Topic & Guide
+Topic Allocation
+Group formation & guide assignment
+
+Phase-II
+Synopsis Submission
+Synopsis Preparation
+Requirement analysis & design phase
+
+Phase-III
+Class Demo
+Mid-term Review
+50% functional prototype demo in class
+
+Phase-IV
+Project Software and Report Submission
+Final Development
+Complete implementation & testing
+
+Guidelines for Academic Software Project Submission
+All final year students are hereby informed about the process and submission requirements for the Academic Software Project. Follow the steps below carefully:
+1. Group Formation & Topic Approval
+● Students must form a group (as per departmental norms).
+● Finalize a project topic and get it approved by the assigned project guide.
+● Submit the list of group members, project title, and name of the guide to the departmental project in-charge.
+2. Project Synopsis Submission
+● Prepare a detailed project synopsis strictly in the prescribed format.
+● Submit the printed and signed copy of synopsis to your project in-charge with signature of guide and HOD.
+3. Class Demonstration (Last Semester)
+● During the final semester, each group must present a working demo of their project in their respective class and division.
+● Attendance and participation in the demo session is mandatory.
+4. Final Report & Submission at Practical Exam
+● Prepare the Final Project Report as per the standard format.
+● Submit the final report along with a CD containing the project source code and documentation.
+● The final submission must be done at the time of the practical examination.
+📌 Note: Late submissions or failure to follow the format and deadlines may lead to disqualification or grade penalties.
+
+Syllabus
+Open Syllabus of All Courses!
+
+
+Our Recruiters
+             
+And
+Many More...
+
+
+Copyright © 2026
+
+Contacts
+ Ambajogai Road, Latur - 413531 (Maharashtra) India.
+ Email: cocsit365@rediffmail.com
+
+Custom Search
+COCSIT OFFICIAL
+Scan to get instant help...
+
+WhatsApp QR Code
+Back to Top
