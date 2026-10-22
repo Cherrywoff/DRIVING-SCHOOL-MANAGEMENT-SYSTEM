@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Driving School Management System - Capstone Project for COCSIT Latur, SRTMUN",
   "scripts": {
+    "build": "npm --prefix client run build",
     "server": "npm --prefix server run dev",
     "server:start": "npm --prefix server start",
     "client": "npm --prefix client run dev",
