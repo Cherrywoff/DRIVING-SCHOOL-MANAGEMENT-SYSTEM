@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { CreditCard, FileDown, FileSpreadsheet, IndianRupee, ShieldCheck } from 'lucide-react';
+import { FileDown, FileSpreadsheet, Loader2 } from 'lucide-react';
 
 export default function PaymentsPage() {
   const { user } = useAuth();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [exportingExcel, setExportingExcel] = useState(false);
 
   const loadPayments = async () => {
     try {
@@ -24,6 +26,28 @@ export default function PaymentsPage() {
     loadPayments();
   }, []);
 
+  const handleDownloadReceipt = async (paymentId, invoiceNumber) => {
+    try {
+      setDownloadingId(paymentId);
+      await api.downloadReceiptPdf(paymentId, invoiceNumber);
+    } catch (err) {
+      alert('Error downloading PDF receipt: ' + err.message);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setExportingExcel(true);
+      await api.downloadRevenueExcel();
+    } catch (err) {
+      alert('Error exporting collections Excel report: ' + err.message);
+    } finally {
+      setExportingExcel(false);
+    }
+  };
+
   return (
     <div>
       <div className="top-header">
@@ -32,15 +56,16 @@ export default function PaymentsPage() {
           <p>Digital Transaction Receipts • Audit Trail & Revenue Reconciliations</p>
         </div>
         {user?.role === 'Admin' && (
-          <a
-            href={api.getRevenueExcelUrl()}
+          <button
+            onClick={handleExportExcel}
+            disabled={exportingExcel}
             className="btn btn-secondary btn-sm"
-            download
             id="export-revenue-excel-btn"
+            title="Download complete revenue audit trail as Excel"
           >
-            <FileSpreadsheet size={16} color="#34d399" />
-            <span>Export Collections (.xlsx)</span>
-          </a>
+            {exportingExcel ? <Loader2 size={16} className="spin" /> : <FileSpreadsheet size={16} color="#34d399" />}
+            <span>{exportingExcel ? 'Exporting...' : 'Export Collections (.xlsx)'}</span>
+          </button>
         )}
       </div>
 
@@ -60,7 +85,7 @@ export default function PaymentsPage() {
                 <th>Payment Mode</th>
                 <th>Date</th>
                 <th>Status</th>
-                <th>Digital PDF Receipt</th>
+                <th>Official PDF Receipt</th>
               </tr>
             </thead>
             <tbody>
@@ -89,7 +114,7 @@ export default function PaymentsPage() {
                           ₹{parseFloat(p.BalanceAmount).toLocaleString('en-IN')}
                         </span>
                       ) : (
-                        <span style={{ color: '#34d399' }}>Nil (Cleared)</span>
+                        <span style={{ color: '#34d399' }}>Nil (Full Paid)</span>
                       )}
                     </td>
                     <td>
@@ -104,16 +129,20 @@ export default function PaymentsPage() {
                       </span>
                     </td>
                     <td>
-                      <a
-                        href={api.getReceiptUrl(p.PaymentID)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => handleDownloadReceipt(p.PaymentID, p.InvoiceNumber)}
+                        disabled={downloadingId === p.PaymentID}
                         className="btn btn-outline btn-sm"
                         id={`download-receipt-${p.PaymentID}`}
+                        title="Download authenticated digital PDF receipt"
                       >
-                        <FileDown size={14} />
-                        <span>PDF Receipt</span>
-                      </a>
+                        {downloadingId === p.PaymentID ? (
+                          <Loader2 size={14} className="spin" />
+                        ) : (
+                          <FileDown size={14} />
+                        )}
+                        <span>{downloadingId === p.PaymentID ? 'Generating...' : 'PDF Receipt'}</span>
+                      </button>
                     </td>
                   </tr>
                 ))

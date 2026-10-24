@@ -46,24 +46,36 @@ export default function DashboardPage({ setActiveTab }) {
         <div className="header-actions">
           {role === 'Admin' && (
             <>
-              <a
-                href={api.getStudentsExcelUrl()}
+              <button
+                onClick={async () => {
+                  try {
+                    await api.downloadStudentExcel();
+                  } catch (err) {
+                    alert('Error exporting students: ' + err.message);
+                  }
+                }}
                 className="btn btn-secondary btn-sm"
-                download
                 id="export-students-btn"
+                title="Download complete enrolled students register as Excel (.xlsx)"
               >
                 <FileSpreadsheet size={16} color="#34d399" />
                 <span>Export Students (.xlsx)</span>
-              </a>
-              <a
-                href={api.getRevenueExcelUrl()}
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    await api.downloadRevenueExcel();
+                  } catch (err) {
+                    alert('Error exporting revenue: ' + err.message);
+                  }
+                }}
                 className="btn btn-secondary btn-sm"
-                download
                 id="export-revenue-btn"
+                title="Download fee collections and invoices as Excel (.xlsx)"
               >
                 <FileSpreadsheet size={16} color="#60a5fa" />
                 <span>Export Revenue (.xlsx)</span>
-              </a>
+              </button>
             </>
           )}
           {role === 'Student' && (

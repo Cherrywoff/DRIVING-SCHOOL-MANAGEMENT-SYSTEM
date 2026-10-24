@@ -1,31 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Calendar, Plus, Clock, Car, User, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, Clock, Car, User, CheckCircle2, AlertCircle, ShieldAlert, Check, X, ShieldCheck } from 'lucide-react';
 
 export default function BookingsPage() {
   const { user } = useAuth();
+  const role = user?.role || user?.Role || 'Student';
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-
-  // Dropdown data
-  const [courses, setCourses] = useState([]);
   const [instructors, setInstructors] = useState([]);
   const [vehicles, setVehicles] = useState([]);
-  const [sessions, setSessions] = useState([]);
-
-  // Form State
-  const [formData, setFormData] = useState({
-    courseId: '',
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [assignForm, setAssignForm] = useState({
     instructorId: '',
     vehicleId: '',
-    sessionDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
-    timeSlot: '07:00:00 - 08:00:00',
+    timeSlot: '',
+    sessionDate: '',
     notes: ''
   });
+  const [actionError, setActionError] = useState('');
+  const [actionSuccess, setActionSuccess] = useState('');
 
   const loadData = async () => {
     try {
@@ -33,22 +28,14 @@ export default function BookingsPage() {
       const bRes = await api.getBookings();
       if (bRes.success) setBookings(bRes.bookings);
 
-      const [cRes, iRes, vRes, sRes] = await Promise.all([
-        api.getCourses(),
-        api.getInstructors(),
-        api.getVehicles(),
-        api.getSessions()
-      ]);
-
-      if (cRes.success) setCourses(cRes.courses);
-      if (iRes.success) setInstructors(iRes.instructors);
-      if (vRes.success) setVehicles(vRes.vehicles);
-      if (sRes.success) setSessions(sRes.sessions);
-
-      // Default select
-      if (cRes.courses?.length > 0) setFormData(prev => ({ ...prev, courseId: cRes.courses[0].CourseID }));
-      if (iRes.instructors?.length > 0) setFormData(prev => ({ ...prev, instructorId: iRes.instructors[0].InstructorID }));
-      if (vRes.vehicles?.length > 0) setFormData(prev => ({ ...prev, vehicleId: vRes.vehicles[0].VehicleID }));
+      if (role === 'Admin') {
+        const [iRes, vRes] = await Promise.all([
+          api.getInstructors(),
+          api.getVehicles()
+        ]);
+        if (iRes.success) setInstructors(iRes.instructors);
+        if (vRes.success) setVehicles(vRes.vehicles);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -60,20 +47,36 @@ export default function BookingsPage() {
     loadData();
   }, []);
 
-  const handleCreateBooking = async (e) => {
+  const openAssignModal = (b) => {
+    setSelectedBooking(b);
+    setAssignForm({
+      instructorId: b.InstructorID || (instructors.length > 0 ? instructors[0].InstructorID : ''),
+      vehicleId: b.VehicleID || (vehicles.length > 0 ? vehicles[0].VehicleID : ''),
+      timeSlot: b.TimeSlot || '07:00 AM - 08:00 AM',
+      sessionDate: b.SessionDate ? b.SessionDate.slice(0, 10) : '',
+      notes: ''
+    });
+    setActionError('');
+    setActionSuccess('');
+    setAssignModalOpen(true);
+  };
+
+  const handleAssignSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
+    setActionError('');
+    setActionSuccess('');
 
     try {
-      const res = await api.createBooking(formData);
+      const res = await api.assignSlot(selectedBooking.BookingID, assignForm);
       if (res.success) {
-        setSuccessMsg('Practical driving slot confirmed successfully!');
-        setModalOpen(false);
-        loadData();
+        setActionSuccess('Slot and instructor assigned successfully!');
+        setTimeout(() => {
+          setAssignModalOpen(false);
+          loadData();
+        }, 1200);
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Error creating booking.');
+      setActionError(err.message || 'Error finalizing slot.');
     }
   };
 
@@ -88,220 +91,333 @@ export default function BookingsPage() {
     }
   };
 
+  const pendingBookings = bookings.filter(b => b.Status === 'Pending');
+  const activeBookings = bookings.filter(b => b.Status !== 'Pending');
+
   return (
     <div>
       <div className="top-header">
         <div className="page-title">
-          <h1>Practical Driving Sessions</h1>
-          <p>Behind-the-Wheel Scheduling • Conflict-Free Instructor & Fleet Allocation</p>
+          <h1>Practical Driving Sessions & Fixed Schedules</h1>
+          <p>Full Course Slot Management • Conflict-Free Instructor & Fleet Allocation</p>
         </div>
-        <button
-          onClick={() => { setModalOpen(true); setErrorMsg(''); setSuccessMsg(''); }}
-          className="btn btn-primary btn-sm"
-          id="book-new-session-btn"
-        >
-          <Plus size={16} />
-          <span>Book Driving Session</span>
-        </button>
       </div>
 
-      {successMsg && (
+      {actionSuccess && !assignModalOpen && (
         <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#6ee7b7', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px' }}>
-          {successMsg}
+          {actionSuccess}
         </div>
       )}
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8' }}>Loading schedule bookings...</div>
+        <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8' }}>Loading training schedules...</div>
       ) : (
-        <div className="table-responsive">
-          <table className="custom-table" id="bookings-table">
-            <thead>
-              <tr>
-                <th>Booking ID</th>
-                <th>Student</th>
-                <th>Program</th>
-                <th>Instructor</th>
-                <th>Vehicle Allocated</th>
-                <th>Date & Time Slot</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <>
+          {/* Admin Section: Pending Slot Requests from Paid Students */}
+          {role === 'Admin' && pendingBookings.length > 0 && (
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                <ShieldAlert size={20} color="#fbbf24" />
+                <h2 style={{ fontSize: '18px', color: '#fbbf24' }}>
+                  Pending Course Slot Requests ({pendingBookings.length})
+                </h2>
+              </div>
+              <div style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '12px', padding: '16px' }}>
+                <div className="table-responsive">
+                  <table className="custom-table">
+                    <thead>
+                      <tr>
+                        <th>Learner Name</th>
+                        <th>Enrolled Course</th>
+                        <th>Duration</th>
+                        <th>Requested Daily Slot</th>
+                        <th>Start Date</th>
+                        <th>Payment Status</th>
+                        <th>Admin Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pendingBookings.map(b => (
+                        <tr key={b.BookingID}>
+                          <td>
+                            <strong>{b.StudentName}</strong>
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>{b.StudentPhone || b.StudentEmail}</div>
+                          </td>
+                          <td>{b.CourseName}</td>
+                          <td>{b.DurationDays} Days</td>
+                          <td>
+                            <span className="badge badge-amber">{b.TimeSlot}</span>
+                          </td>
+                          <td>{new Date(b.SessionDate).toLocaleDateString('en-IN')}</td>
+                          <td>
+                            <span className="badge badge-green">Full Fee Paid</span>
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => openAssignModal(b)}
+                              className="btn btn-primary btn-sm"
+                              id={`assign-slot-btn-${b.BookingID}`}
+                            >
+                              Finalize & Assign Trainer
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Student View: Assigned Schedule Card */}
+          {role === 'Student' && (
+            <div style={{ marginBottom: '24px' }}>
               {bookings.length === 0 ? (
-                <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', color: '#94a3b8', padding: '40px' }}>
-                    No driving sessions scheduled yet. Click "Book Driving Session" to reserve a slot.
-                  </td>
-                </tr>
+                <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
+                  <Calendar size={48} color="#60a5fa" style={{ margin: '0 auto 12px auto' }} />
+                  <h3>No Active Driving Schedule</h3>
+                  <p style={{ color: '#94a3b8', fontSize: '14px', maxWidth: '440px', margin: '8px auto 20px auto' }}>
+                    To begin practical training, please enroll in a course. Your fixed training slot will be finalized by the academy administration.
+                  </p>
+                </div>
               ) : (
                 bookings.map(b => (
-                  <tr key={b.BookingID}>
-                    <td><strong>#BK-{b.BookingID}</strong></td>
-                    <td>
-                      <div>{b.StudentName}</div>
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>{b.LLRNumber || b.StudentPhone}</div>
-                    </td>
-                    <td>{b.CourseName}</td>
-                    <td>{b.InstructorName}</td>
-                    <td>
-                      <div>{b.ModelType}</div>
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>{b.RegistrationNumber}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: '600' }}>{new Date(b.SessionDate).toLocaleDateString('en-IN')}</div>
-                      <div style={{ fontSize: '12px', color: '#60a5fa' }}>{b.TimeSlot}</div>
-                    </td>
-                    <td>
-                      <span className={`badge ${b.Status === 'Completed' ? 'badge-green' : b.Status === 'Scheduled' ? 'badge-blue' : 'badge-rose'}`}>
-                        {b.Status}
-                      </span>
-                    </td>
-                    <td>
-                      {b.Status === 'Scheduled' && (
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                          {(user?.role === 'Admin' || user?.role === 'Instructor') && (
-                            <button
-                              onClick={() => handleStatusChange(b.BookingID, 'Completed')}
-                              className="btn btn-secondary btn-sm"
-                              title="Mark Completed"
-                            >
-                              <CheckCircle2 size={14} color="#34d399" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleStatusChange(b.BookingID, 'Cancelled')}
-                            className="btn btn-danger btn-sm"
-                            title="Cancel Session"
-                          >
-                            <XCircle size={14} />
-                          </button>
+                  <div key={b.BookingID} className="card" style={{ marginBottom: '16px', borderLeft: b.Status === 'Scheduled' ? '4px solid #10b981' : '4px solid #f59e0b' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <h3 style={{ fontSize: '18px' }}>{b.CourseName}</h3>
+                          <span className={`badge ${b.Status === 'Scheduled' ? 'badge-green' : 'badge-amber'}`}>
+                            {b.Status === 'Scheduled' ? 'Active Driving Schedule' : 'Pending Admin Assignment'}
+                          </span>
                         </div>
-                      )}
-                    </td>
-                  </tr>
+                        <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: '4px' }}>
+                          Course Duration: {b.DurationDays} Days • {b.PracticalHours} Road Driving Hours
+                        </p>
+                      </div>
+
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontSize: '12px', color: '#94a3b8', display: 'block' }}>Fixed Daily Slot</span>
+                        <strong style={{ fontSize: '16px', color: '#60a5fa' }}>{b.TimeSlot}</strong>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '16px', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px', fontSize: '13px' }}>
+                      <div>
+                        <span style={{ color: '#94a3b8', fontSize: '11px', display: 'block' }}>Certified Instructor</span>
+                        <strong>{b.InstructorName ? `${b.InstructorName} (${b.InstructorPhone || 'Assigned'})` : 'Awaiting Assignment'}</strong>
+                      </div>
+                      <div>
+                        <span style={{ color: '#94a3b8', fontSize: '11px', display: 'block' }}>Dual-Control Vehicle</span>
+                        <strong style={{ color: '#34d399' }}>{b.ModelType ? `${b.ModelType} (${b.RegistrationNumber})` : 'Awaiting Fleet Allocation'}</strong>
+                      </div>
+                      <div>
+                        <span style={{ color: '#94a3b8', fontSize: '11px', display: 'block' }}>Training Start Date</span>
+                        <strong>{new Date(b.SessionDate).toLocaleDateString('en-IN')}</strong>
+                      </div>
+                    </div>
+
+                    {b.Status === 'Pending' && (
+                      <div style={{ marginTop: '12px', fontSize: '12px', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Clock size={14} /> Full payment received. Administrator will assign your certified trainer and car shortly.
+                      </div>
+                    )}
+                  </div>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          )}
+
+          {/* Master Table of All Driving Training Schedules */}
+          {role !== 'Student' && (
+            <div>
+              <h2 style={{ fontSize: '18px', marginBottom: '14px' }}>All Driving Training Schedules</h2>
+              <div className="table-responsive">
+                <table className="custom-table" id="all-bookings-table">
+                  <thead>
+                    <tr>
+                      <th>Booking Ref</th>
+                      <th>Learner Student</th>
+                      <th>Course</th>
+                      <th>Assigned Trainer</th>
+                      <th>Assigned Vehicle</th>
+                      <th>Fixed Daily Slot</th>
+                      <th>Start Date</th>
+                      <th>Schedule Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeBookings.length === 0 ? (
+                      <tr>
+                        <td colSpan={9} style={{ textAlign: 'center', color: '#94a3b8', padding: '40px' }}>
+                          No scheduled practical training sessions.
+                        </td>
+                      </tr>
+                    ) : (
+                      activeBookings.map(b => (
+                        <tr key={b.BookingID}>
+                          <td><strong>#BKG-{b.BookingID}</strong></td>
+                          <td>
+                            <strong>{b.StudentName}</strong>
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>{b.StudentPhone || b.StudentEmail}</div>
+                          </td>
+                          <td>{b.CourseName}</td>
+                          <td>
+                            {b.InstructorName ? (
+                              <span style={{ fontWeight: '600' }}>{b.InstructorName}</span>
+                            ) : (
+                              <span style={{ color: '#fbbf24' }}>Unassigned</span>
+                            )}
+                          </td>
+                          <td>
+                            {b.RegistrationNumber ? (
+                              <span style={{ color: '#34d399' }}>{b.ModelType} ({b.RegistrationNumber})</span>
+                            ) : (
+                              <span style={{ color: '#fbbf24' }}>Unassigned</span>
+                            )}
+                          </td>
+                          <td>
+                            <span className="badge badge-blue">{b.TimeSlot}</span>
+                          </td>
+                          <td>{new Date(b.SessionDate).toLocaleDateString('en-IN')}</td>
+                          <td>
+                            <span className={`badge ${b.Status === 'Completed' ? 'badge-green' : b.Status === 'Scheduled' ? 'badge-blue' : 'badge-rose'}`}>
+                              {b.Status}
+                            </span>
+                          </td>
+                          <td>
+                            {role === 'Admin' && (
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                <button
+                                  onClick={() => openAssignModal(b)}
+                                  className="btn btn-outline btn-sm"
+                                  title="Reassign instructor or change slot"
+                                >
+                                  Reassign
+                                </button>
+                                {b.Status === 'Scheduled' && (
+                                  <button
+                                    onClick={() => handleStatusChange(b.BookingID, 'Completed')}
+                                    className="btn btn-success btn-sm"
+                                    title="Mark course training as completed"
+                                  >
+                                    <Check size={14} />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
-      {/* Book Session Modal */}
-      {modalOpen && (
+      {/* Admin Assign Instructor & Vehicle Modal */}
+      {assignModalOpen && selectedBooking && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
-              <h3>Reserve Practical Driving Slot</h3>
-              <button className="close-btn" onClick={() => setModalOpen(false)}>&times;</button>
+              <h3>Finalize Schedule & Assign Trainer</h3>
+              <button className="close-btn" onClick={() => setAssignModalOpen(false)}>&times;</button>
             </div>
 
-            {errorMsg && (
-              <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fca5a5', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>{errorMsg}</span>
+            {actionError && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#fca5a5', padding: '10px', borderRadius: '6px', marginBottom: '16px', fontSize: '13px' }}>
+                <AlertCircle size={16} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'middle' }} />
+                {actionError}
               </div>
             )}
 
-            <form onSubmit={handleCreateBooking}>
+            <form onSubmit={handleAssignSubmit}>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '10px', marginBottom: '20px', fontSize: '13px', lineHeight: '1.8' }}>
+                <div><strong>Learner:</strong> {selectedBooking.StudentName} ({selectedBooking.StudentPhone || selectedBooking.StudentEmail})</div>
+                <div><strong>Course:</strong> {selectedBooking.CourseName} ({selectedBooking.DurationDays} Days)</div>
+                <div><strong>Requested Slot:</strong> <span style={{ color: '#60a5fa', fontWeight: '700' }}>{selectedBooking.TimeSlot}</span></div>
+                <div><strong>Course Start Date:</strong> {new Date(selectedBooking.SessionDate).toLocaleDateString('en-IN')}</div>
+              </div>
+
               <div className="form-group">
-                <label className="form-label">Driver Training Program *</label>
+                <label className="form-label">Assign Certified Driving Instructor *</label>
                 <select
                   className="form-select"
-                  value={formData.courseId}
-                  onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
+                  value={assignForm.instructorId}
+                  onChange={(e) => setAssignForm({ ...assignForm, instructorId: e.target.value })}
                   required
                 >
-                  {courses.map(c => (
-                    <option key={c.CourseID} value={c.CourseID}>
-                      {c.CourseName} ({c.Category})
+                  <option value="">-- Choose Instructor --</option>
+                  {instructors.map(inst => (
+                    <option key={inst.InstructorID} value={inst.InstructorID}>
+                      {inst.FullName} ({inst.Specialization} • {inst.ExperienceYears} yrs exp)
                     </option>
                   ))}
                 </select>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label">Assigned Certified Instructor *</label>
-                  <select
-                    className="form-select"
-                    value={formData.instructorId}
-                    onChange={(e) => setFormData({ ...formData, instructorId: e.target.value })}
-                    required
-                  >
-                    {instructors.map(i => (
-                      <option key={i.InstructorID} value={i.InstructorID}>
-                        {i.FullName} ({i.Specialization})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Dual-Control Vehicle *</label>
-                  <select
-                    className="form-select"
-                    value={formData.vehicleId}
-                    onChange={(e) => setFormData({ ...formData, vehicleId: e.target.value })}
-                    required
-                  >
-                    {vehicles.map(v => (
-                      <option key={v.VehicleID} value={v.VehicleID}>
-                        {v.ModelType} [{v.RegistrationNumber}]
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label">Session Date *</label>
-                  <input
-                    type="date"
-                    className="form-input"
-                    value={formData.sessionDate}
-                    onChange={(e) => setFormData({ ...formData, sessionDate: e.target.value })}
-                    min={new Date().toISOString().slice(0, 10)}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Preferred Time Slot *</label>
-                  <select
-                    className="form-select"
-                    value={formData.timeSlot}
-                    onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
-                    required
-                  >
-                    {sessions.map(s => (
-                      <option key={s.SessionID} value={`${s.StartTime} - ${s.EndTime}`}>
-                        {s.SessionName} ({s.StartTime.slice(0, 5)} - {s.EndTime.slice(0, 5)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginTop: '4px' }}>
+                  System prevents double-booking this instructor for the same time slot across overlapping students.
+                </span>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Session Practice Goal (Optional)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g., Parallel parking on incline, clutch gear shifting"
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                />
+                <label className="form-label">Assign Training Vehicle *</label>
+                <select
+                  className="form-select"
+                  value={assignForm.vehicleId}
+                  onChange={(e) => setAssignForm({ ...assignForm, vehicleId: e.target.value })}
+                  required
+                >
+                  <option value="">-- Choose Vehicle --</option>
+                  {vehicles.map(v => (
+                    <option key={v.VehicleID} value={v.VehicleID}>
+                      {v.ModelType} ({v.RegistrationNumber} • {v.Category})
+                    </option>
+                  ))}
+                </select>
+                <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginTop: '4px' }}>
+                  System prevents double-booking this vehicle for the same time slot across overlapping students.
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="form-group">
+                  <label className="form-label">Fixed Slot Time</label>
+                  <select
+                    className="form-select"
+                    value={assignForm.timeSlot}
+                    onChange={(e) => setAssignForm({ ...assignForm, timeSlot: e.target.value })}
+                  >
+                    <option value="07:00 AM - 08:00 AM">07:00 AM - 08:00 AM</option>
+                    <option value="08:00 AM - 09:00 AM">08:00 AM - 09:00 AM</option>
+                    <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
+                    <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
+                    <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                    <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
+                    <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Confirmed Start Date</label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    value={assignForm.sessionDate}
+                    onChange={(e) => setAssignForm({ ...assignForm, sessionDate: e.target.value })}
+                  />
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>
+                <button type="button" className="btn btn-secondary" onClick={() => setAssignModalOpen(false)}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" id="confirm-booking-btn">
-                  Confirm Reservation
+                <button type="submit" className="btn btn-primary" id="finalize-slot-confirm-btn">
+                  Approve & Finalize Schedule
                 </button>
               </div>
             </form>

@@ -55,9 +55,10 @@ exports.processPayment = async (req, res) => {
 
     const course = cRows[0];
     const totalFee = parseFloat(course.Fee);
-    const paid = parseFloat(amountPaid);
-    const balance = Math.max(0, totalFee - paid);
-    const status = balance === 0 ? 'Completed' : 'Partial';
+    // As per academy policy, course enrollment requires full payment
+    const paid = totalFee;
+    const balance = 0.00;
+    const status = 'Completed';
 
     const timestamp = Date.now().toString().slice(-6);
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
@@ -70,10 +71,36 @@ exports.processPayment = async (req, res) => {
       [studentId, courseId, invoiceNumber, totalFee, paid, balance, paymentMethod || 'UPI_Simulated', transactionRef, status]
     );
 
+    const paymentId = result.insertId;
+
+    // Auto-create a pending course slot reservation if requested
+    const { preferredSlot, startDate } = req.body;
+    let bookingId = null;
+    if (preferredSlot || startDate) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const sessionDate = startDate || tomorrow.toISOString().slice(0, 10);
+      const timeSlot = preferredSlot || '07:00 AM - 08:00 AM';
+
+      const [bookingResult] = await pool.query(
+        `INSERT INTO BookingMaster (StudentID, CourseID, SessionDate, TimeSlot, Status, Notes)
+         VALUES (?, ?, ?, ?, 'Pending', ?)`,
+        [
+          studentId,
+          courseId,
+          sessionDate,
+          timeSlot,
+          `Course fully paid (Receipt ${invoiceNumber}). Student requested ${timeSlot}. Awaiting Admin instructor/vehicle assignment.`
+        ]
+      );
+      bookingId = bookingResult.insertId;
+    }
+
     res.status(201).json({
       success: true,
-      message: 'Payment simulated and invoice generated successfully!',
-      paymentId: result.insertId,
+      message: 'Course purchase and full payment completed! Official invoice generated.',
+      paymentId,
+      bookingId,
       invoiceNumber,
       transactionRef,
       status,
@@ -111,7 +138,7 @@ exports.generateReceiptPdf = async (req, res) => {
 
     const doc = new PDFDocument({ margin: 50 });
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename=Receipt_${payment.InvoiceNumber}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=Receipt_${payment.InvoiceNumber}.pdf`);
     doc.pipe(res);
 
     // Header styling

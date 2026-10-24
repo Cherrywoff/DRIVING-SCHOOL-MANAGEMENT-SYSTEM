@@ -8,5 +8,6 @@ router.post('/login', authController.login);
 router.get('/profile', authenticateToken, authController.getProfile);
 router.put('/profile', authenticateToken, authController.updateProfile);
 router.get('/users', authenticateToken, authorizeRoles('Admin'), authController.getAllUsers);
+router.get('/users/:id/details', authenticateToken, authorizeRoles('Admin'), authController.getStudentFullDetails);
 
 module.exports = router;

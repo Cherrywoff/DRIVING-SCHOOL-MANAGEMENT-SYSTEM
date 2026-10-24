@@ -33,6 +33,38 @@ async function request(endpoint, options = {}) {
   }
 }
 
+// Guaranteed file download helper handling binary blobs and Authorization token
+async function downloadFile(endpoint, defaultFilename) {
+  const token = localStorage.getItem('token');
+  const separator = endpoint.includes('?') ? '&' : '?';
+  const url = `${API_BASE}${endpoint}${token ? `${separator}token=${encodeURIComponent(token)}` : ''}`;
+
+  const res = await fetch(url, {
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+  });
+
+  if (!res.ok) {
+    let errMsg = `Download failed with status ${res.status}`;
+    try {
+      const errJson = await res.json();
+      if (errJson.message) errMsg = errJson.message;
+    } catch {
+      // not JSON
+    }
+    throw new Error(errMsg);
+  }
+
+  const blob = await res.blob();
+  const blobUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = blobUrl;
+  link.download = defaultFilename || 'download';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+}
+
 export const api = {
   // Auth
   login: (credentials) => request('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
@@ -40,6 +72,7 @@ export const api = {
   getProfile: () => request('/auth/profile'),
   updateProfile: (profileData) => request('/auth/profile', { method: 'PUT', body: JSON.stringify(profileData) }),
   getAllUsers: (params = '') => request(`/auth/users${params ? '?' + params : ''}`),
+  getStudentFullDetails: (id) => request(`/auth/users/${id}/details`),
 
   // Courses
   getCourses: (params = '') => request(`/courses${params ? '?' + params : ''}`),
@@ -52,6 +85,7 @@ export const api = {
   getInstructor: (id) => request(`/instructors/${id}`),
   createInstructor: (data) => request('/instructors', { method: 'POST', body: JSON.stringify(data) }),
   updateInstructor: (id, data) => request(`/instructors/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteInstructor: (id) => request(`/instructors/${id}`, { method: 'DELETE' }),
 
   // Vehicles
   getVehicles: (params = '') => request(`/vehicles${params ? '?' + params : ''}`),
@@ -61,9 +95,10 @@ export const api = {
   // Sessions
   getSessions: () => request('/sessions'),
 
-  // Bookings
+  // Bookings & Slot Assignment
   getBookings: (params = '') => request(`/bookings${params ? '?' + params : ''}`),
   createBooking: (data) => request('/bookings', { method: 'POST', body: JSON.stringify(data) }),
+  assignSlot: (id, data) => request(`/bookings/${id}/assign`, { method: 'PUT', body: JSON.stringify(data) }),
   updateBookingStatus: (id, data) => request(`/bookings/${id}/status`, { method: 'PUT', body: JSON.stringify(data) }),
 
   // Attendance
@@ -74,16 +109,29 @@ export const api = {
   getTests: (params = '') => request(`/tests${params ? '?' + params : ''}`),
   scheduleTest: (data) => request('/tests', { method: 'POST', body: JSON.stringify(data) }),
   updateTestResult: (id, data) => request(`/tests/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  getMockQuizQuestions: () => request('/tests/mock-quiz/questions'),
+  getPapersList: () => request('/tests/mock-quiz/papers'),
+  getMockQuizQuestions: (paperId) => request(`/tests/mock-quiz/questions${paperId ? `?paperId=${paperId}` : ''}`),
   submitMockQuiz: (data) => request('/tests/mock-quiz/submit', { method: 'POST', body: JSON.stringify(data) }),
 
   // Payments & Receipts
   getPayments: (params = '') => request(`/payments${params ? '?' + params : ''}`),
   processPayment: (data) => request('/payments/process', { method: 'POST', body: JSON.stringify(data) }),
-  getReceiptUrl: (paymentId) => `${API_BASE}/payments/${paymentId}/receipt`,
+  downloadReceiptPdf: (paymentId, invoiceNumber) => downloadFile(`/payments/${paymentId}/receipt`, `Receipt_${invoiceNumber || paymentId}.pdf`),
+  getReceiptUrl: (paymentId) => {
+    const token = localStorage.getItem('token');
+    return `${API_BASE}/payments/${paymentId}/receipt${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+  },
 
   // Reports
   getDashboardStats: () => request('/reports/dashboard-stats'),
-  getStudentsExcelUrl: () => `${API_BASE}/reports/export/students-excel`,
-  getRevenueExcelUrl: () => `${API_BASE}/reports/export/revenue-excel`
+  downloadStudentExcel: () => downloadFile('/reports/export/students-excel', 'Students_Roster_2026.xlsx'),
+  downloadRevenueExcel: () => downloadFile('/reports/export/revenue-excel', 'Fee_Collections_Report_2026.xlsx'),
+  getStudentsExcelUrl: () => {
+    const token = localStorage.getItem('token');
+    return `${API_BASE}/reports/export/students-excel${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+  },
+  getRevenueExcelUrl: () => {
+    const token = localStorage.getItem('token');
+    return `${API_BASE}/reports/export/revenue-excel${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+  }
 };

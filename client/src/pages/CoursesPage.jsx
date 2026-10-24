@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { GraduationCap, Clock, Award, Check, Plus, CreditCard, ShieldCheck } from 'lucide-react';
+import { GraduationCap, Clock, Award, Check, Plus, CreditCard, ShieldCheck, FileDown, Calendar, CheckCircle2 } from 'lucide-react';
 
 export default function CoursesPage({ setActiveTab }) {
   const { user } = useAuth();
@@ -11,9 +11,12 @@ export default function CoursesPage({ setActiveTab }) {
   const [enrollModal, setEnrollModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('UPI_Simulated');
-  const [amountToPay, setAmountToPay] = useState('');
+  const [preferredSlot, setPreferredSlot] = useState('07:00 AM - 08:00 AM');
+  const [startDate, setStartDate] = useState('');
   const [actionSuccess, setActionSuccess] = useState('');
   const [actionError, setActionError] = useState('');
+  const [enrollmentReceipt, setEnrollmentReceipt] = useState(null);
+  const [downloadingReceipt, setDownloadingReceipt] = useState(false);
 
   // New course form
   const [newCourse, setNewCourse] = useState({
@@ -41,12 +44,15 @@ export default function CoursesPage({ setActiveTab }) {
 
   useEffect(() => {
     fetchCourses();
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    setStartDate(tomorrow.toISOString().slice(0, 10));
   }, []);
 
   const openEnrollModal = (course) => {
     setSelectedCourse(course);
-    setAmountToPay(course.Fee);
     setEnrollModal(true);
+    setEnrollmentReceipt(null);
     setActionSuccess('');
     setActionError('');
   };
@@ -57,18 +63,37 @@ export default function CoursesPage({ setActiveTab }) {
     try {
       const res = await api.processPayment({
         courseId: selectedCourse.CourseID,
-        amountPaid: parseFloat(amountToPay),
-        paymentMethod
+        amountPaid: parseFloat(selectedCourse.Fee), // Full amount always
+        paymentMethod,
+        preferredSlot,
+        startDate
       });
+
       if (res.success) {
-        setActionSuccess(`Enrolled successfully! Invoice ${res.invoiceNumber} generated.`);
-        setTimeout(() => {
-          setEnrollModal(false);
-          setActiveTab('payments');
-        }, 1500);
+        setEnrollmentReceipt({
+          paymentId: res.paymentId,
+          invoiceNumber: res.invoiceNumber,
+          transactionRef: res.transactionRef,
+          amountPaid: selectedCourse.Fee,
+          courseName: selectedCourse.CourseName,
+          slot: preferredSlot,
+          startDate
+        });
+        setActionSuccess(`Enrolled successfully! Full payment verified. Invoice ${res.invoiceNumber} generated.`);
       }
     } catch (err) {
       setActionError(err.message || 'Payment simulation failed.');
+    }
+  };
+
+  const handleDownloadReceipt = async (paymentId, invoiceNumber) => {
+    try {
+      setDownloadingReceipt(true);
+      await api.downloadReceiptPdf(paymentId, invoiceNumber);
+    } catch (err) {
+      alert('Error downloading receipt: ' + err.message);
+    } finally {
+      setDownloadingReceipt(false);
     }
   };
 
@@ -106,7 +131,7 @@ export default function CoursesPage({ setActiveTab }) {
         )}
       </div>
 
-      {actionSuccess && (
+      {actionSuccess && !enrollModal && (
         <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#6ee7b7', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px' }}>
           {actionSuccess}
         </div>
@@ -147,7 +172,7 @@ export default function CoursesPage({ setActiveTab }) {
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 <div>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Course Fee</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Full Course Fee</span>
                   <h4 style={{ fontSize: '22px', color: '#34d399' }}>₹{parseFloat(course.Fee).toLocaleString('en-IN')}</h4>
                 </div>
 
@@ -158,7 +183,7 @@ export default function CoursesPage({ setActiveTab }) {
                     id={`enroll-course-${course.CourseID}`}
                   >
                     <CreditCard size={14} />
-                    <span>Enroll & Pay</span>
+                    <span>Enroll & Pay Full Fee</span>
                   </button>
                 )}
               </div>
@@ -170,9 +195,9 @@ export default function CoursesPage({ setActiveTab }) {
       {/* Enroll & Pay Modal */}
       {enrollModal && selectedCourse && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content" style={{ maxWidth: '620px' }}>
             <div className="modal-header">
-              <h3>Enroll in Driver Training Program</h3>
+              <h3>Course Enrollment & Slot Selection</h3>
               <button className="close-btn" onClick={() => setEnrollModal(false)}>&times;</button>
             </div>
 
@@ -182,53 +207,121 @@ export default function CoursesPage({ setActiveTab }) {
               </div>
             )}
 
-            <form onSubmit={handleEnrollSubmit}>
-              <div style={{ background: 'rgba(0,0,0,0.25)', padding: '16px', borderRadius: '10px', marginBottom: '20px' }}>
-                <h4 style={{ fontSize: '16px' }}>{selectedCourse.CourseName}</h4>
-                <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
-                  {selectedCourse.DurationDays} Days Training • {selectedCourse.PracticalHours} Practical Road Hours
+            {enrollmentReceipt ? (
+              <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
+                  <CheckCircle2 size={36} />
+                </div>
+                <h3 style={{ fontSize: '20px', color: '#fff' }}>Enrollment & Payment Confirmed!</h3>
+                <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '6px', marginBottom: '20px' }}>
+                  Invoice <strong>{enrollmentReceipt.invoiceNumber}</strong> for <strong>₹{parseFloat(enrollmentReceipt.amountPaid).toLocaleString('en-IN')}</strong> has been cleared.
                 </p>
-                <div style={{ marginTop: '12px', fontSize: '18px', fontWeight: '700', color: '#34d399' }}>
-                  Total Package Fee: ₹{parseFloat(selectedCourse.Fee).toLocaleString('en-IN')}
+
+                <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '10px', textAlign: 'left', marginBottom: '24px', fontSize: '13px', lineHeight: '1.8' }}>
+                  <div><strong>Course:</strong> {enrollmentReceipt.courseName}</div>
+                  <div><strong>Selected Slot:</strong> <span style={{ color: '#60a5fa' }}>{enrollmentReceipt.slot}</span> (Fixed for course duration)</div>
+                  <div><strong>Course Start Date:</strong> {new Date(enrollmentReceipt.startDate).toLocaleDateString('en-IN')}</div>
+                  <div><strong>Transaction Reference:</strong> {enrollmentReceipt.transactionRef}</div>
+                  <div style={{ color: '#fbbf24', marginTop: '8px', fontSize: '12px' }}>
+                    * Your slot reservation has been submitted. Academy Administration will finalize your trainer & vehicle assignment.
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                  <button
+                    onClick={() => handleDownloadReceipt(enrollmentReceipt.paymentId, enrollmentReceipt.invoiceNumber)}
+                    disabled={downloadingReceipt}
+                    className="btn btn-primary"
+                    id="download-invoice-receipt-modal-btn"
+                  >
+                    <FileDown size={16} />
+                    <span>{downloadingReceipt ? 'Generating Receipt...' : 'Download Official PDF Receipt'}</span>
+                  </button>
+                  <button
+                    onClick={() => { setEnrollModal(false); setActiveTab('bookings'); }}
+                    className="btn btn-secondary"
+                  >
+                    View My Driving Sessions
+                  </button>
                 </div>
               </div>
+            ) : (
+              <form onSubmit={handleEnrollSubmit}>
+                <div style={{ background: 'rgba(0,0,0,0.25)', padding: '16px', borderRadius: '10px', marginBottom: '20px' }}>
+                  <h4 style={{ fontSize: '16px' }}>{selectedCourse.CourseName}</h4>
+                  <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
+                    {selectedCourse.DurationDays} Days Training • {selectedCourse.PracticalHours} Practical Road Hours
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                    <span style={{ fontSize: '13px', color: '#94a3b8' }}>Mandatory Full Course Fee:</span>
+                    <span style={{ fontSize: '20px', fontWeight: '800', color: '#34d399' }}>
+                      ₹{parseFloat(selectedCourse.Fee).toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                </div>
 
-              <div className="form-group">
-                <label className="form-label">Payment Amount (INR) *</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={amountToPay}
-                  onChange={(e) => setAmountToPay(e.target.value)}
-                  max={selectedCourse.Fee}
-                  min={100}
-                  required
-                />
-              </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '18px' }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Select Fixed Daily Training Slot *</label>
+                    <select
+                      className="form-select"
+                      value={preferredSlot}
+                      onChange={(e) => setPreferredSlot(e.target.value)}
+                      required
+                    >
+                      <option value="07:00 AM - 08:00 AM">07:00 AM - 08:00 AM (Early Morning)</option>
+                      <option value="08:00 AM - 09:00 AM">08:00 AM - 09:00 AM (Morning Batch)</option>
+                      <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM (Mid Morning)</option>
+                      <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM (Afternoon)</option>
+                      <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM (Evening Batch)</option>
+                      <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM (Sunset Batch)</option>
+                      <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM (Night Practice)</option>
+                    </select>
+                    <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginTop: '4px' }}>
+                      Fixed for your entire {selectedCourse.DurationDays}-day duration
+                    </span>
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">Payment Method (Simulated)</label>
-                <select
-                  className="form-select"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="UPI_Simulated">UPI (Google Pay / PhonePe / Paytm - Simulated)</option>
-                  <option value="DebitCard_Simulated">Debit Card / ATM Card (Simulated)</option>
-                  <option value="NetBanking_Simulated">Internet Banking (Simulated)</option>
-                  <option value="Cash">Cash at Academy Office</option>
-                </select>
-              </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Preferred Start Date *</label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={startDate}
+                      min={new Date().toISOString().slice(0, 10)}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      required
+                    />
+                    <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginTop: '4px' }}>
+                      First on-road session date
+                    </span>
+                  </div>
+                </div>
 
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setEnrollModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary" id="confirm-payment-btn">
-                  Confirm & Generate Receipt
-                </button>
-              </div>
-            </form>
+                <div className="form-group">
+                  <label className="form-label">Payment Mode (Simulated Gateway) *</label>
+                  <select
+                    className="form-select"
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  >
+                    <option value="UPI_Simulated">UPI (Google Pay / PhonePe / Paytm - Instant)</option>
+                    <option value="DebitCard_Simulated">Debit Card / ATM Card (Simulated)</option>
+                    <option value="NetBanking_Simulated">Internet Banking (Simulated)</option>
+                    <option value="Cash">Cash at Academy Office</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+                  <button type="button" className="btn btn-secondary" onClick={() => setEnrollModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary" id="confirm-payment-btn">
+                    Pay Full Fee & Finalize Slot Request
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

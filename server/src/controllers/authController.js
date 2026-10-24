@@ -257,3 +257,97 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error fetching users.' });
   }
 };
+
+exports.getStudentFullDetails = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    // 1. Basic profile
+    const [userRows] = await pool.query(
+      `SELECT UserID, FullName, Email, Role, Phone, LLRNumber, Address, Status, CreatedAt
+       FROM UserMaster WHERE UserID = ?`,
+      [studentId]
+    );
+
+    if (userRows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Student not found.' });
+    }
+
+    const student = userRows[0];
+
+    // 2. Bookings & Course Schedules
+    const [bookings] = await pool.query(
+      `SELECT b.*, c.CourseCode, c.CourseName, c.Category AS CourseCategory, c.DurationDays, c.PracticalHours, c.Fee,
+              u_inst.FullName AS InstructorName, u_inst.Phone AS InstructorPhone,
+              v.RegistrationNumber, v.ModelType
+       FROM BookingMaster b
+       JOIN CourseMaster c ON b.CourseID = c.CourseID
+       LEFT JOIN InstructorMaster i ON b.InstructorID = i.InstructorID
+       LEFT JOIN UserMaster u_inst ON i.UserID = u_inst.UserID
+       LEFT JOIN VehicleMaster v ON b.VehicleID = v.VehicleID
+       WHERE b.StudentID = ?
+       ORDER BY b.CreatedAt DESC`,
+      [studentId]
+    );
+
+    // 3. Fee Invoices & Payments
+    const [payments] = await pool.query(
+      `SELECT p.*, c.CourseName
+       FROM PaymentMaster p
+       LEFT JOIN CourseMaster c ON p.CourseID = c.CourseID
+       WHERE p.StudentID = ?
+       ORDER BY p.PaymentDate DESC`,
+      [studentId]
+    );
+
+    // 4. Attendance & Practical Driving Log
+    const [attendance] = await pool.query(
+      `SELECT a.*, c.CourseName, u_inst.FullName AS InstructorName, v.RegistrationNumber, v.ModelType
+       FROM AttendanceMaster a
+       LEFT JOIN CourseMaster c ON a.CourseID = c.CourseID
+       LEFT JOIN InstructorMaster i ON a.InstructorID = i.InstructorID
+       LEFT JOIN UserMaster u_inst ON i.UserID = u_inst.UserID
+       LEFT JOIN VehicleMaster v ON a.VehicleID = v.VehicleID
+       WHERE a.StudentID = ?
+       ORDER BY a.AttendanceDate DESC`,
+      [studentId]
+    );
+
+    // 5. RTO & Mock Tests
+    const [tests] = await pool.query(
+      `SELECT t.*, c.CourseName
+       FROM TestScheduleMaster t
+       LEFT JOIN CourseMaster c ON t.CourseID = c.CourseID
+       WHERE t.StudentID = ?
+       ORDER BY t.TestDate DESC, t.CreatedAt DESC`,
+      [studentId]
+    );
+
+    // Summary calculations
+    const totalPaid = payments.reduce((sum, p) => sum + parseFloat(p.AmountPaid || 0), 0);
+    const totalFee = payments.reduce((sum, p) => sum + parseFloat(p.TotalAmount || 0), 0);
+    const balanceDue = payments.reduce((sum, p) => sum + parseFloat(p.BalanceAmount || 0), 0);
+    const sessionsAttended = attendance.filter(a => a.AttendanceStatus === 'Present').length;
+
+    res.json({
+      success: true,
+      student: {
+        ...student,
+        summary: {
+          totalPaid,
+          totalFee,
+          balanceDue,
+          sessionsAttended,
+          testsTaken: tests.length
+        },
+        bookings,
+        payments,
+        attendance,
+        tests
+      }
+    });
+  } catch (error) {
+    console.error('getStudentFullDetails error:', error);
+    res.status(500).json({ success: false, message: 'Server error retrieving student full details.' });
+  }
+};
