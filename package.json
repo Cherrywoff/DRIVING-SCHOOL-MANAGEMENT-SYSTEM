@@ -10,7 +10,8 @@
     "client:build": "npm --prefix client run build",
     "db:test": "npm --prefix server run test:db",
     "db:migrate": "npm --prefix server run migrate",
-    "db:seed": "node server/scripts/seed-data.js"
+    "db:seed": "node server/scripts/seed-data.js",
+    "db:clean-reset": "node server/scripts/clean-and-reset-data.js"
   },
   "keywords": [
     "capstone-project",
