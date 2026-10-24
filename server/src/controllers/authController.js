@@ -302,14 +302,15 @@ exports.getStudentFullDetails = async (req, res) => {
 
     // 4. Attendance & Practical Driving Log
     const [attendance] = await pool.query(
-      `SELECT a.*, c.CourseName, u_inst.FullName AS InstructorName, v.RegistrationNumber, v.ModelType
+      `SELECT a.*, b.TimeSlot, c.CourseName, u_inst.FullName AS InstructorName, v.RegistrationNumber, v.ModelType
        FROM AttendanceMaster a
-       LEFT JOIN CourseMaster c ON a.CourseID = c.CourseID
+       JOIN BookingMaster b ON a.BookingID = b.BookingID
+       LEFT JOIN CourseMaster c ON b.CourseID = c.CourseID
        LEFT JOIN InstructorMaster i ON a.InstructorID = i.InstructorID
        LEFT JOIN UserMaster u_inst ON i.UserID = u_inst.UserID
-       LEFT JOIN VehicleMaster v ON a.VehicleID = v.VehicleID
+       LEFT JOIN VehicleMaster v ON b.VehicleID = v.VehicleID
        WHERE a.StudentID = ?
-       ORDER BY a.AttendanceDate DESC`,
+       ORDER BY a.SessionDate DESC`,
       [studentId]
     );
 
