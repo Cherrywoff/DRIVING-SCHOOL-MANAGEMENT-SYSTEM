@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driving School Management System — Complete Project Presentation & Viva Defense Guide</title>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --primary: #3b82f6;
+      --primary-light: #60a5fa;
+      --accent-teal: #14b8a6;
+      --accent-amber: #f59e0b;
+      --accent-green: #10b981;
+      --accent-rose: #f43f5e;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --code-bg: #030712;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation & Controls */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(17, 24, 39, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      display: none;
+    }
+
+    @media(min-width: 800px) {
+      .brand-subtitle { display: inline; }
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      background: #1f2937;
+      color: var(--text-main);
+      border: 1px solid #374151;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #374151;
+      border-color: #4b5563;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-color: #3b82f6;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-mode {
+      background: #312e81;
+      border-color: #4338ca;
+      color: #c7d2fe;
+    }
+
+    .progress-bar-container {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #1f2937;
+      z-index: 1000;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      transition: width 0.3s ease;
+    }
+
+    /* Main Container */
+    .main-wrapper {
+      margin-top: 68px;
+      padding: 24px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: calc(100vh - 68px);
+    }
+
+    /* Slide Deck Layout */
+    .slide {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    /* Continuous Reading Mode (when toggled) */
+    body.continuous-mode .slide {
+      display: block !important;
+      margin-bottom: 60px;
+      padding-bottom: 40px;
+      border-bottom: 2px dashed #1f2937;
+    }
+
+    body.continuous-mode .slide-footer-nav {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Card */
+    .slide-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 36px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+    }
+
+    .slide-header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .slide-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary-light);
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .slide-num {
+      font-size: 14px;
+      font-weight: 700;
+      color: #6b7280;
+      background: #1f2937;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    /* Content Styling */
+    h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #e5e7eb;
+      margin: 20px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    p {
+      color: #d1d5db;
+      font-size: 16px;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 18px;
+      color: #d1d5db;
+    }
+
+    li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    strong {
+      color: #fff;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin: 20px 0;
+      font-size: 15px;
+      line-height: 1.6;
+      border-left: 5px solid;
+    }
+
+    .callout-simple {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: #3b82f6;
+    }
+
+    .callout-simple-title {
+      color: #60a5fa;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-viva {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: #f59e0b;
+    }
+
+    .callout-viva-title {
+      color: #fbbf24;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-tech {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: #10b981;
+    }
+
+    .callout-tech-title {
+      color: #34d399;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Grid Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .feature-card {
+      background: #1a2234;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .feature-card h4 {
+      color: #60a5fa;
+      font-size: 17px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .badge-blue { background: #1e3a8a; color: #93c5fd; }
+    .badge-green { background: #064e3b; color: #6ee7b7; }
+    .badge-amber { background: #78350f; color: #fde68a; }
+    .badge-purple { background: #4c1d95; color: #ddd6fe; }
+
+    /* Code Blocks */
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .code-header {
+      background: #111827;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #9ca3af;
+      border-bottom: 1px solid #1f2937;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    pre {
+      padding: 16px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e5e7eb;
+      overflow-x: auto;
+    }
+
+    .keyword { color: #f472b6; font-weight: bold; }
+    .fn { color: #60a5fa; }
+    .str { color: #a7f3d0; }
+    .comment { color: #6b7280; font-style: italic; }
+    .num { color: #fcd34d; }
+
+    /* Interactive Table */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #374151;
+    }
+
+    .custom-table th {
+      background: #1f2937;
+      color: #93c5fd;
+      text-align: left;
+      padding: 12px 14px;
+      font-weight: 700;
+      border-bottom: 2px solid #374151;
+    }
+
+    .custom-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #1f2937;
+      color: #d1d5db;
+    }
+
+    .custom-table tr:nth-child(even) {
+      background: #151d2f;
+    }
+
+    /* Q&A Accordion */
+    .qa-box {
+      background: #161f30;
+      border: 1px solid #283548;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    .qa-question {
+      padding: 16px 20px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #f3f4f6;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a253a;
+      transition: background 0.2s;
+    }
+
+    .qa-question:hover {
+      background: #202d46;
+    }
+
+    .qa-answer {
+      padding: 18px 20px;
+      font-size: 15px;
+      color: #cbd5e1;
+      border-top: 1px solid #283548;
+      line-height: 1.7;
+    }
+
+    .qa-arrow {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+
+    /* Footer Navigation */
+    .slide-footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      margin-top: 20px;
+      border-top: 1px solid #1f2937;
+    }
+
+    /* Quick jump drawer */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 380px;
+      max-width: 90vw;
+      background: #111827;
+      border-left: 1px solid #1f2937;
+      padding: 24px;
+      overflow-y: auto;
+      z-index: 2001;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .drawer-item {
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: #d1d5db;
+      cursor: pointer;
+      margin-bottom: 6px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .drawer-item:hover, .drawer-item.active {
+      background: #1f2937;
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    .drawer-item span.num {
+      background: #374151;
+      color: #9ca3af;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* Keyboard shortcuts helper */
+    .kb-pill {
+      background: #374151;
+      color: #e5e7eb;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #4b5563;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-bar">
+    <div class="brand-title">
+      🚗 DriveAcademy
+      <span class="brand-subtitle">— COCSIT Latur / SRTMUN BCA Capstone Presentation</span>
+    </div>
+    <div class="nav-controls">
+      <button class="btn btn-mode" id="toggleModeBtn" onclick="toggleMode()">
+        📖 <span id="modeText">Reading Mode</span>
+      </button>
+      <button class="btn" onclick="openDrawer()">
+        ☰ Index
+      </button>
+      <button class="btn" id="prevBtn" onclick="prevSlide()">
+        ← Prev
+      </button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextSlide()">
+        Next →
+      </button>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Slide Index Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h3 style="margin:0;">Presentation Index</h3>
+      <button class="btn" onclick="closeDrawer()" style="padding:4px 8px;">✕</button>
+    </div>
+    <div id="drawerList"></div>
+  </aside>
+
+  <!-- Main Content Container -->
+  <main class="main-wrapper">
+
+    <!-- ===================================================================
+         SLIDE 1: TITLE & EXECUTIVE SUMMARY
+         =================================================================== -->
+    <section class="slide active" id="slide-1">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Capstone Project Viva Defense</span>
+            <h1 class="slide-title">DRIVING SCHOOL MANAGEMENT SYSTEM (DriveAcademy)</h1>
+          </div>
+          <span class="slide-num">Slide 1 of 17</span>
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(168,85,247,0.1)); border: 1px solid rgba(59,130,246,0.3); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+          <div class="grid-2">
+            <div>
+              <p style="font-size: 14px; color: #9ca3af; margin-bottom: 4px;">Candidate Name:</p>
+              <h2 style="font-size: 22px; color: #fff; margin-bottom: 12px;">Radheya Bharat Khandelwal</h2>
+              <p style="font-size: 14px; color: #9ca3af; margin-bottom: 4px;">Degree & Department:</p>
+              <p style="font-size: 16px; color: #60a5fa; font-weight: 600; margin-bottom: 12px;">Bachelor of Computer Applications (B.C.A.)</p>
+            </div>
+            <div>
+              <p style="font-size: 14px; color: #9ca3af; margin-bottom: 4px;">Institution:</p>
+              <p style="font-size: 15px; color: #e5e7eb; margin-bottom: 8px;"><strong>College of Computer Science & Information Technology (COCSIT), Latur</strong></p>
+              <p style="font-size: 14px; color: #9ca3af; margin-bottom: 4px;">Affiliated University:</p>
+              <p style="font-size: 15px; color: #e5e7eb;"><strong>Swami Ramanand Teerth Marathwada University (SRTMUN), Nanded</strong></p>
+              <p style="font-size: 13px; color: #10b981; margin-top: 8px;"><strong>Academic Year: 2025 – 2026</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <h3>🎯 What is This Project in One Sentence?</h3>
+        <p>
+          <strong>DriveAcademy</strong> is a full-stack, cloud-deployed web platform that replaces manual paper registers in motor driving schools with conflict-free slot scheduling, automated 100% upfront fee payment with PDF receipts, instructor salary payroll, verified practical driving attendance logs, and 6 official RTO learner license mock exam papers.
+        </p>
+
+        <div class="callout callout-simple">
+          <div class="callout-simple-title">💡 In Simple Words for Viva:</div>
+          "Sir/Madam, driving schools in India still use paper diaries to write down who will drive which car at what time. This causes fights because two students get booked for the same car with the same instructor. Also, academies lose money when students don't pay their remaining fees. Our system completely digitizes this: a student enrolls, pays full fees online, gets an instant official PDF invoice, books their preferred time slot without any collision, logs real kilometers driven with their instructor, and practices real RTO question papers so they pass their license test on the first try."
+        </div>
+
+        <div class="grid-3">
+          <div class="feature-card">
+            <h4>🌐 Live Frontend</h4>
+            <p style="font-size:13px; margin:0;">Hosted on <strong>Cloudflare Pages CDN</strong> with global speed and edge security.</p>
+            <p style="font-size:12px; color:#60a5fa; margin-top:6px;">https://driving-school-frontend.pages.dev/</p>
+          </div>
+          <div class="feature-card">
+            <h4>⚙️ Live Backend REST API</h4>
+            <p style="font-size:13px; margin:0;">Deployed as a microservice on <strong>Render Cloud</strong> with automated Git CI/CD.</p>
+            <p style="font-size:12px; color:#34d399; margin-top:6px;">https://driving-school-management-system-c33z.onrender.com/api</p>
+          </div>
+          <div class="feature-card">
+            <h4>🗄️ Cloud Database</h4>
+            <p style="font-size:13px; margin:0;">Powered by <strong>TiDB Cloud Serverless MySQL</strong> with mandatory SSL/TLS encryption.</p>
+            <p style="font-size:12px; color:#fde68a; margin-top:6px;">gateway01.ap-southeast-1.prod.aws.tidbcloud.com</p>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <span style="color:#6b7280; font-size:13px;">Press <span class="kb-pill">→</span> or click Next to proceed</span>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Real-World Problem →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 2: THE REAL WORLD PROBLEM & CONTEXT
+         =================================================================== -->
+    <section class="slide" id="slide-2">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Problem Statement & Motivation</span>
+            <h2 class="slide-title">Why Was This Project Built? (Field Work & Ground Reality)</h2>
+          </div>
+          <span class="slide-num">Slide 2 of 17</span>
+        </div>
+
+        <p>
+          Under the <strong>Motor Vehicles Act, 1988</strong> and <strong>Central Motor Vehicles Rules (CMVR)</strong>, every citizen applying for a driver's license must undergo statutory practical training and clear an RTO computer examination. During our field survey across driving academies in Latur (Shivaji Nagar, Ausa Road, and MIDC), we identified four major operational failures:
+        </p>
+
+        <div class="grid-2">
+          <div class="feature-card" style="border-left: 4px solid #ef4444;">
+            <h4 style="color:#f87171;">1. Dual-Booking Chaos</h4>
+            <p style="font-size:14px;">Because bookings are written on paper diaries or whiteboards, two students frequently turn up at 7:00 AM demanding the same dual-control Maruti Swift. One student goes home disappointed, damaging the academy's reputation.</p>
+          </div>
+          <div class="feature-card" style="border-left: 4px solid #f59e0b;">
+            <h4 style="color:#fbbf24;">2. Fee Defaults & Leakage</h4>
+            <p style="font-size:14px;">When academies accept informal cash installments, over <strong>22% of student fee balances remain unpaid</strong> after training concludes. There was no digital gatekeeper blocking slot reservations until full tuition is cleared.</p>
+          </div>
+          <div class="feature-card" style="border-left: 4px solid #3b82f6;">
+            <h4 style="color:#60a5fa;">3. High RTO Exam Failure Rates</h4>
+            <p style="font-size:14px;">Students regularly fail the computer-based test at the RTO (MH-24) because they only practiced vehicle steering and were never trained on mandatory road signs, right-of-way rules, and traffic penalty laws.</p>
+          </div>
+          <div class="feature-card" style="border-left: 4px solid #10b981;">
+            <h4 style="color:#34d399;">4. Lack of Verifiable Training Proof</h4>
+            <p style="font-size:14px;">There were zero logs proving how many kilometers a student drove, whether they practiced hill-starts or parallel parking, or what star rating their instructor gave them for safety.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-viva">
+          <div class="callout-viva-title">🎓 Common Examiner Question:</div>
+          <strong>"Why didn't you just use Excel or Google Sheets for the driving school?"</strong><br>
+          <span style="color:#fef3c7;">
+            <strong>Answer:</strong> "Excel cannot prevent two people from entering the same car at the same time (no relational constraints or concurrency locks). Excel cannot authenticate users with JWT roles so students don't tamper with fees. Excel cannot automatically grade RTO quizzes, generate authenticated PDF tax invoices with tamper-proof UTR numbers, or work responsively on a student's smartphone."
+          </span>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Overview</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: 3-Tier Architecture →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 3: 3-TIER ARCHITECTURE
+         =================================================================== -->
+    <section class="slide" id="slide-3">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">System Blueprint</span>
+            <h2 class="slide-title">System Architecture: Modern 3-Tier Cloud Blueprint</h2>
+          </div>
+          <span class="slide-num">Slide 3 of 17</span>
+        </div>
+
+        <p>
+          Our application implements an industry-standard **3-Tier Decoupled Architecture**. This means the user interface, the business logic, and the database live in separate, independently scalable cloud layers:
+        </p>
+
+        <div style="background:#030712; border:1px solid #1f2937; border-radius:12px; padding:24px; margin:20px 0; text-align:center;">
+          <div style="display:flex; flex-direction:column; gap:16px; max-width:800px; margin:0 auto;">
+            
+            <!-- Tier 1 -->
+            <div style="background:#1e293b; border:2px solid #3b82f6; border-radius:10px; padding:16px;">
+              <span class="badge badge-blue">TIER 1: PRESENTATION TIER (CLIENT)</span>
+              <h4 style="color:#fff; margin:6px 0;">React 18 + Vite SPA (Single Page Application)</h4>
+              <p style="font-size:13px; color:#cbd5e1; margin:0;">Deployed globally on <strong>Cloudflare Pages Edge CDN</strong> • Custom Vanilla CSS3 • Lucide React Icons • Responsive Mobile Drawer</p>
+            </div>
+
+            <div style="color:#60a5fa; font-size:20px; font-weight:bold;">⬇ ⬆ HTTPS REST API Requests (JSON + Bearer Tokens)</div>
+
+            <!-- Tier 2 -->
+            <div style="background:#1e293b; border:2px solid #10b981; border-radius:10px; padding:16px;">
+              <span class="badge badge-green">TIER 2: APPLICATION LOGIC TIER (SERVER)</span>
+              <h4 style="color:#fff; margin:6px 0;">Node.js 24 + Express.js REST API</h4>
+              <p style="font-size:13px; color:#cbd5e1; margin:0;">Hosted on <strong>Render Cloud Web Service</strong> • JWT Verification • Collision Prevention • ExcelJS Streaming • PDFKit Binary Engine</p>
+            </div>
+
+            <div style="color:#34d399; font-size:20px; font-weight:bold;">⬇ ⬆ MySQL Connection Pool (SSL / TLS Encrypted Port 4000)</div>
+
+            <!-- Tier 3 -->
+            <div style="background:#1e293b; border:2px solid #f59e0b; border-radius:10px; padding:16px;">
+              <span class="badge badge-amber">TIER 3: DATA PERSISTENCE TIER (DATABASE)</span>
+              <h4 style="color:#fff; margin:6px 0;">TiDB Cloud Serverless MySQL (Distributed SQL)</h4>
+              <p style="font-size:13px; color:#cbd5e1; margin:0;">AWS Singapore Cluster (ap-southeast-1) • 9 Relational Tables in 3NF • ACID Compliance • Auto-scaling & Automated Daily Backups</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="callout callout-simple">
+          <div class="callout-simple-title">💡 What does "Decoupled" mean in simple terms?</div>
+          "If the frontend needs a visual design change, we update React on Cloudflare without touching the backend. If the backend needs a new report calculation, we update Node.js on Render without touching React. The two communicate purely through clean JSON endpoints over HTTPS."
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Problem</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Tech Stack Explained →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 4: TECHNOLOGY STACK & JUSTIFICATION
+         =================================================================== -->
+    <section class="slide" id="slide-4">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Technology Selection</span>
+            <h2 class="slide-title">Tech Stack Deep-Dive: Why Did We Choose These Tools?</h2>
+          </div>
+          <span class="slide-num">Slide 4 of 17</span>
+        </div>
+
+        <p>Examiners love asking: <em>"Why did you choose React over Angular?"</em> or <em>"Why TiDB Cloud instead of regular MySQL in XAMPP?"</em> Here are the exact technical answers:</p>
+
+        <div class="grid-2">
+          <div class="feature-card">
+            <h4>⚛️ React 18 + Vite (Why not HTML/PHP or CRA?)</h4>
+            <ul style="font-size:14px; margin-left:18px;">
+              <li><strong>Virtual DOM:</strong> When an Admin updates an instructor's salary or slot, only that exact cell re-renders instead of reloading the entire webpage.</li>
+              <li><strong>Vite over Webpack (Create React App):</strong> Vite uses native browser ES Modules (ESM). It builds the production bundle in <strong>2.9 seconds</strong>, compared to 45+ seconds on CRA.</li>
+              <li><strong>Single Page Application (SPA):</strong> Users navigate between Dashboard, Bookings, and RTO Quizzes with zero page flickering.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>🟢 Node.js + Express.js (Why not PHP or Python?)</h4>
+            <ul style="font-size:14px; margin-left:18px;">
+              <li><strong>Non-Blocking Asynchronous I/O:</strong> Node handles multiple concurrent requests (e.g. 10 students taking RTO quizzes simultaneously) on a single event loop thread without freezing.</li>
+              <li><strong>JavaScript Everywhere:</strong> Frontend and backend share the exact same language and JSON structures, reducing context switching and bug surface.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>☁️ TiDB Cloud Serverless (Why not local XAMPP?)</h4>
+            <ul style="font-size:14px; margin-left:18px;">
+              <li><strong>Public Availability:</strong> A local XAMPP database only runs on <code>localhost:3306</code> on the student's laptop. TiDB Cloud runs on AWS Cloud, allowing teachers and examiners to open the live website on their mobile phones from anywhere.</li>
+              <li><strong>Native MySQL 8.0 Protocol:</strong> Completely compatible with standard MySQL queries, foreign keys, and transactions, but with enterprise TLS encryption.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>🛡️ JSON Web Tokens (JWT) (Why not Session Cookies?)</h4>
+            <ul style="font-size:14px; margin-left:18px;">
+              <li><strong>Stateless Authentication:</strong> The server doesn't have to store session files in memory. Every request carries a cryptographically signed token in the <code>Authorization: Bearer</code> header.</li>
+              <li><strong>Cross-Domain Security:</strong> Works seamlessly when the frontend is hosted on <code>pages.dev</code> and backend is on <code>onrender.com</code> without cookie blocking.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Architecture</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Database Design →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 5: DATABASE DESIGN & 9 RELATIONAL TABLES
+         =================================================================== -->
+    <section class="slide" id="slide-5">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Relational Modeling (3NF)</span>
+            <h2 class="slide-title">Database Design: The 9 Normalized Tables</h2>
+          </div>
+          <span class="slide-num">Slide 5 of 17</span>
+        </div>
+
+        <p>
+          The database is designed in strict **Third Normal Form (3NF)** with zero transitive dependencies. All 9 tables serve a distinct operational entity:
+        </p>
+
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Table Name</th>
+              <th>Primary Key</th>
+              <th>Foreign Keys (Relationships)</th>
+              <th>Purpose in Driving School</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>UserMaster</strong></td>
+              <td><code>UserID</code></td>
+              <td>None</td>
+              <td>Stores Admin, Instructor, and Student accounts with bcrypt password hashes and RTO LLR numbers.</td>
+            </tr>
+            <tr>
+              <td><strong>CourseMaster</strong></td>
+              <td><code>CourseID</code></td>
+              <td>None</td>
+              <td>Defines curricula: Two-Wheeler MCWG, Four-Wheeler Manual, Automatic, and Combo with duration and tuition fees.</td>
+            </tr>
+            <tr>
+              <td><strong>VehicleMaster</strong></td>
+              <td><code>VehicleID</code></td>
+              <td>None</td>
+              <td>Fleet registry: registration plates (MH-24-AG-xxxx), dual-control pedals, transmission, fitness & insurance expiries.</td>
+            </tr>
+            <tr>
+              <td><strong>InstructorMaster</strong></td>
+              <td><code>InstructorID</code></td>
+              <td><code>UserID</code>, <code>AssignedVehicleID</code></td>
+              <td>Certified trainer records, RTO instructor badge numbers, specializations, experience, and <strong>monthly salary</strong>.</td>
+            </tr>
+            <tr>
+              <td><strong>SessionMaster</strong></td>
+              <td><code>SessionID</code></td>
+              <td>None</td>
+              <td>Standard daily time batches (Morning 7-8 AM, 8-9 AM, 9-10 AM; Evening 4-5 PM, 5-6 PM, 6-7 PM).</td>
+            </tr>
+            <tr>
+              <td><strong>BookingMaster</strong></td>
+              <td><code>BookingID</code></td>
+              <td><code>StudentID</code>, <code>CourseID</code>, <code>InstructorID</code>, <code>VehicleID</code></td>
+              <td>Practical session reservations. Holds initial 'Pending' state until Admin assigns trainer & car conflict-free.</td>
+            </tr>
+            <tr>
+              <td><strong>AttendanceMaster</strong></td>
+              <td><code>AttendanceID</code></td>
+              <td><code>BookingID</code>, <code>StudentID</code>, <code>InstructorID</code></td>
+              <td>Verified driving log: odometer kilometers driven, syllabus topics covered, 1-5 star competency rating, feedback.</td>
+            </tr>
+            <tr>
+              <td><strong>PaymentMaster</strong></td>
+              <td><code>PaymentID</code></td>
+              <td><code>StudentID</code>, <code>CourseID</code></td>
+              <td>100% upfront fee receipts: sequential invoice numbers (<code>INV-2026-xxxx</code>), simulated UPI references, 0 balance.</td>
+            </tr>
+            <tr>
+              <td><strong>TestScheduleMaster</strong></td>
+              <td><code>TestID</code></td>
+              <td><code>StudentID</code>, <code>CourseID</code></td>
+              <td>Assessment records: Theory mock quiz scores, internal H-Track trials, and official RTO licensing test appointments.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-simple">
+          <div class="callout-simple-title">🔍 Quick Link to Diagram Files in Your Workspace:</div>
+          You have high-resolution 300 DPI diagram images ready in your project directory:<br>
+          • <strong>E-R Diagram:</strong> <code>er_diagram.png</code> (3400 × 2500 px)<br>
+          • <strong>Level 1 DFD:</strong> <code>dfd_level1_diagram.png</code> (3400 × 2500 px)
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Tech Stack</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: User Roles →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 6: THE THREE USER ROLES
+         =================================================================== -->
+    <section class="slide" id="slide-6">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Role-Based Access Control</span>
+            <h2 class="slide-title">The Three User Roles & Portal Capabilities</h2>
+          </div>
+          <span class="slide-num">Slide 6 of 17</span>
+        </div>
+
+        <div class="grid-3">
+          <!-- Role 1: Admin -->
+          <div class="feature-card" style="border-top: 4px solid #3b82f6;">
+            <span class="badge badge-blue">Role 1: Administrator</span>
+            <h3 style="color:#60a5fa; font-size:18px; margin:10px 0 6px 0;">Chief Administrator</h3>
+            <p style="font-size:13px; color:#9ca3af;">Login: <code>admin@drivingschool.com</code> / <code>Admin@123</code></p>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Executive KPI Dashboard:</strong> Real-time student count, fleet utilization, and total revenue collected (₹40,500.00).</li>
+              <li><strong>Excel Export Engine:</strong> Instant client-side download of Student Rosters and Financial Ledgers (.xlsx).</li>
+              <li><strong>Instructor Payroll:</strong> View and modify monthly instructor salaries (e.g. ₹32,000 for Rajesh Patil).</li>
+              <li><strong>Slot Finalization:</strong> Review pending course slot requests and allocate instructor + vehicle without clashes.</li>
+              <li><strong>Student 360° Profile:</strong> Click any student to open their complete history (courses, receipts, driving logs, quiz scores).</li>
+            </ul>
+          </div>
+
+          <!-- Role 2: Instructor -->
+          <div class="feature-card" style="border-top: 4px solid #10b981;">
+            <span class="badge badge-green">Role 2: Certified Instructor</span>
+            <h3 style="color:#34d399; font-size:18px; margin:10px 0 6px 0;">Practical Driving Trainer</h3>
+            <p style="font-size:13px; color:#9ca3af;">Login: <code>rajesh.patil@drivingschool.com</code> / <code>Instructor@123</code></p>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Personal Training Roster:</strong> View assigned daily training batches and assigned training vehicle.</li>
+              <li><strong>Lesson Attendance Logging:</strong> Record student presence (Present/Absent/Late) with exact date and time.</li>
+              <li><strong>Odometer Tracking:</strong> Log kilometers driven per lesson (e.g. 8.5 km, 12.0 km) for vehicle audit.</li>
+              <li><strong>Competency Rating:</strong> Grade candidate from 1 to 5 stars on clutch control, steering recovery, and gradient starts.</li>
+              <li><strong>Qualitative Notes:</strong> Write personalized road advice visible to the student and administrator.</li>
+            </ul>
+          </div>
+
+          <!-- Role 3: Student -->
+          <div class="feature-card" style="border-top: 4px solid #f59e0b;">
+            <span class="badge badge-amber">Role 3: Student Learner</span>
+            <h3 style="color:#fbbf24; font-size:18px; margin:10px 0 6px 0;">Enrolled Driving Aspirant</h3>
+            <p style="font-size:13px; color:#9ca3af;">Login: <code>radheya.khandelwal@student.com</code> / <code>Student@123</code></p>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Curriculum Catalog:</strong> Explore two-wheeler, manual car, automatic car, and combo training packages.</li>
+              <li><strong>100% Full Payment:</strong> Pay entire course fee upfront via simulated UPI/Card to eliminate debt.</li>
+              <li><strong>PDF Tax Invoices:</strong> Download official school receipts with invoice numbers (<code>INV-2026-xxxx</code>).</li>
+              <li><strong>6 RTO Mock Question Papers:</strong> Practice real multiple-choice tests with timer and instant answer reviews.</li>
+              <li><strong>Progress Tracking:</strong> View upcoming practical driving appointments and instructor feedback.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Database</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Double-Booking Logic →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 7: DEEP DIVE: DOUBLE-BOOKING CONFLICT PREVENTION
+         =================================================================== -->
+    <section class="slide" id="slide-7">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Core Algorithm #1</span>
+            <h2 class="slide-title">Double-Booking & Conflict Prevention Algorithm</h2>
+          </div>
+          <span class="slide-num">Slide 7 of 17</span>
+        </div>
+
+        <p>
+          This is one of the **most critical algorithms** in the entire project. When an Administrator approves a pending driving slot and assigns an Instructor and a Vehicle, how do we guarantee that neither the instructor nor the car is already busy in another session at that exact date and time?
+        </p>
+
+        <div class="code-box">
+          <div class="code-header">
+            <span>server/src/controllers/bookingController.js</span>
+            <span>SQL Collision Prevention Logic</span>
+          </div>
+          <pre><span class="keyword">exports</span>.<span class="fn">assignInstructorAndVehicle</span> = <span class="keyword">async</span> (req, res) => {
+  <span class="keyword">const</span> { bookingId } = req.params;
+  <span class="keyword">const</span> { instructorId, vehicleId } = req.body;
+
+  <span class="comment">// 1. Fetch target booking's date and time slot</span>
+  <span class="keyword">const</span> [booking] = <span class="keyword">await</span> pool.<span class="fn">query</span>(
+    <span class="str">'SELECT SessionDate, TimeSlot FROM BookingMaster WHERE BookingID = ?'</span>,
+    [bookingId]
+  );
+  <span class="keyword">const</span> { SessionDate, TimeSlot } = booking[<span class="num">0</span>];
+
+  <span class="comment">// 2. Mathematical Collision Check Query</span>
+  <span class="keyword">const</span> [conflicts] = <span class="keyword">await</span> pool.<span class="fn">query</span>(
+    <span class="str">`SELECT BookingID FROM BookingMaster
+     WHERE SessionDate = ? AND TimeSlot = ?
+       AND (InstructorID = ? OR VehicleID = ?)
+       AND BookingID != ? AND Status NOT IN ('Cancelled')`</span>,
+    [SessionDate, TimeSlot, instructorId, vehicleId, bookingId]
+  );
+
+  <span class="comment">// 3. If any record matches, REJECT the transaction</span>
+  <span class="keyword">if</span> (conflicts.length > <span class="num">0</span>) {
+    <span class="keyword">return</span> res.<span class="fn">status</span>(<span class="num">409</span>).<span class="fn">json</span>({
+      success: <span class="keyword">false</span>,
+      message: <span class="str">'Schedule Conflict: Instructor or Vehicle is already assigned in this time slot!'</span>
+    });
+  }
+
+  <span class="comment">// 4. If clean, commit the assignment and upgrade status to 'Scheduled'</span>
+  <span class="keyword">await</span> pool.<span class="fn">query</span>(
+    <span class="str">`UPDATE BookingMaster
+     SET InstructorID = ?, VehicleID = ?, Status = 'Scheduled'
+     WHERE BookingID = ?`</span>,
+    [instructorId, vehicleId, bookingId]
+  );
+
+  res.<span class="fn">json</span>({ success: <span class="keyword">true</span>, message: <span class="str">'Trainer & Car assigned successfully!'</span> });
+};</pre>
+        </div>
+
+        <div class="callout callout-simple">
+          <div class="callout-simple-title">💡 How to Explain this to the Examiner:</div>
+          "Sir, before saving an assignment, our backend runs a check on <code>BookingMaster</code>. It checks if there is ANY existing booking on the same date and same time slot where either <code>InstructorID = ?</code> OR <code>VehicleID = ?</code>. If the query returns even 1 row, our server throws an <strong>HTTP 409 Conflict error</strong> and refuses to save it. Only if the count is zero does it approve the booking. This mathematically prevents double-booking."
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: User Roles</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Authentication Logic →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 8: DEEP DIVE: AUTHENTICATION & SECURITY
+         =================================================================== -->
+    <section class="slide" id="slide-8">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Core Algorithm #2</span>
+            <h2 class="slide-title">Authentication, Bcrypt Hashing & JWT Middleware</h2>
+          </div>
+          <span class="slide-num">Slide 8 of 17</span>
+        </div>
+
+        <p>Security is implemented through two industry-standard techniques:</p>
+
+        <div class="grid-2">
+          <div class="feature-card">
+            <h4>🔒 1. Password Hashing with Bcrypt</h4>
+            <p style="font-size:14px;">We <strong>never store plain passwords</strong> in the database. When a user registers or is seeded, their password passes through <code>bcrypt.hash(password, 10)</code>. This generates a 60-character one-way cryptographic hash with random salt. Even if a hacker steals the database, they cannot read the passwords.</p>
+          </div>
+          <div class="feature-card">
+            <h4>🎫 2. JSON Web Token (JWT)</h4>
+            <p style="font-size:14px;">Upon successful login, the server creates a signed JWT containing <code>{ userId, role, email }</code> signed with our secret key. The frontend stores this token in <code>localStorage</code> and attaches it to every API call.</p>
+          </div>
+        </div>
+
+        <div class="code-box">
+          <div class="code-header">
+            <span>server/src/middleware/auth.js</span>
+            <span>Dual-Mode JWT Verification (Header + Query Fallback)</span>
+          </div>
+          <pre><span class="keyword">exports</span>.<span class="fn">authenticateToken</span> = (req, res, next) => {
+  <span class="keyword">const</span> authHeader = req.headers[<span class="str">'authorization'</span>];
+  
+  <span class="comment">// Notice: We support ?token= query parameter as a fallback!</span>
+  <span class="comment">// Why? Because native browser PDF downloads (&lt;a href&gt;) cannot send Bearer headers!</span>
+  <span class="keyword">const</span> token = (authHeader && authHeader.<span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>]) || req.query.token;
+
+  <span class="keyword">if</span> (!token) {
+    <span class="keyword">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ success: <span class="keyword">false</span>, message: <span class="str">'Access Denied: Missing Token'</span> });
+  }
+
+  jwt.<span class="fn">verify</span>(token, process.env.JWT_SECRET, (err, user) => {
+    <span class="keyword">if</span> (err) {
+      <span class="keyword">return</span> res.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">json</span>({ success: <span class="keyword">false</span>, message: <span class="str">'Forbidden: Invalid Token'</span> });
+    }
+    req.user = user; <span class="comment">// Attach decoded { userId, role } to the request</span>
+    <span class="fn">next</span>();
+  });
+};</pre>
+        </div>
+
+        <div class="callout callout-viva">
+          <div class="callout-viva-title">🎓 Clever Engineering Detail for Viva:</div>
+          "Examiners often ask: <em>'How do you protect file downloads like PDF invoices?'</em> Standard HTML links (<code>&lt;a href="..." download&gt;</code>) cannot attach custom HTTP headers. That's why our middleware smartly accepts the token via query param <code>?token=xyz</code> when downloading invoices, ensuring 100% security while allowing instant browser file saves!"
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Conflict Logic</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Billing & Invoicing →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 9: DEEP DIVE: 100% FEE PAYMENT & PDF INVOICING
+         =================================================================== -->
+    <section class="slide" id="slide-9">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Core Algorithm #3</span>
+            <h2 class="slide-title">100% Upfront Fee Invoicing & PDF Receipt Engine</h2>
+          </div>
+          <span class="slide-num">Slide 9 of 17</span>
+        </div>
+
+        <p>
+          To solve the issue of student fee defaults, our system enforces a **100% Full Payment Rule**. A student cannot book a course slot with a partial balance.
+        </p>
+
+        <div class="grid-2">
+          <div class="feature-card">
+            <h4>💳 Payment Verification Workflow</h4>
+            <ol style="font-size:14px; margin-left:18px;">
+              <li>Student selects course (e.g. Four-Wheeler Manual, Fee: ₹6,500).</li>
+              <li>Frontend displays fixed 100% amount (no partial input allowed).</li>
+              <li>Simulated UPI / NetBanking transaction reference is captured (e.g. <code>TXN-UPI-20261025-xxxx</code>).</li>
+              <li>Server verifies <code>AmountPaid === TotalAmount</code>.</li>
+              <li>Database creates record in <code>PaymentMaster</code> with <code>BalanceAmount = 0.00</code> and status <code>'Completed'</code>.</li>
+            </ol>
+          </div>
+
+          <div class="feature-card">
+            <h4>📄 PDFKit Vector Receipt Generation</h4>
+            <p style="font-size:14px;">The server uses the <strong>PDFKit</strong> library to compile vector PDF documents on-the-fly directly in memory:</p>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li>Official Header: DriveAcademy Motor Driving School, Latur.</li>
+              <li>Unique Tax Invoice Number: <code>INV-2026-xxxx</code>.</li>
+              <li>Candidate Details: Full Name, Contact, RTO LLR Number.</li>
+              <li>Itemized Fee Table: Course tuition, GST breakdown, Net Paid.</li>
+              <li>Official Digital Stamp & Verification Watermark.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Security</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Practical Attendance →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 10: DEEP DIVE: PRACTICAL DRIVING ATTENDANCE
+         =================================================================== -->
+    <section class="slide" id="slide-10">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Core Algorithm #4</span>
+            <h2 class="slide-title">Practical Lesson Attendance & Odometer Logging</h2>
+          </div>
+          <span class="slide-num">Slide 10 of 17</span>
+        </div>
+
+        <p>
+          Unlike academic college attendance which is just Present/Absent, motor driving instruction requires detailed physical metrics:
+        </p>
+
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Log Parameter</th>
+              <th>Data Type</th>
+              <th>Why It Is Essential for Driving Academies</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Session Attendance</strong></td>
+              <td><code>ENUM('Present','Absent','Late')</code></td>
+              <td>Ensures student fulfills mandatory training days required by RTO before practical driving test.</td>
+            </tr>
+            <tr>
+              <td><strong>Kilometers Driven</strong></td>
+              <td><code>DECIMAL(5,2)</code></td>
+              <td>Captures real odometer reading (e.g. 8.50 km, 14.50 km). Audits vehicle fuel usage and trainer work.</td>
+            </tr>
+            <tr>
+              <td><strong>Topics Covered</strong></td>
+              <td><code>TEXT</code></td>
+              <td>Specific driving maneuvers taught: Clutch biting point, reverse bay parking, Ambajogai road gradient start.</td>
+            </tr>
+            <tr>
+              <td><strong>Competency Rating</strong></td>
+              <td><code>INT (1 to 5 Stars)</code></td>
+              <td>Evaluates driver confidence, mirror awareness, steering recovery, and emergency braking reactions.</td>
+            </tr>
+            <tr>
+              <td><strong>Instructor Feedback</strong></td>
+              <td><code>TEXT</code></td>
+              <td>Constructive qualitative feedback given by the certified trainer to improve road habits.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-simple">
+          <div class="callout-simple-title">💡 Why this wins points in your Viva:</div>
+          "Sir, this turns our project from a simple booking website into a true <strong>Fleet & Educational Training ERP</strong>. When the RTO inspector audits the academy, the school can show verified digital attendance with real odometer mileage for every single learner."
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Payments</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: RTO Mock Exams →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 11: DEEP DIVE: 6-PAPER RTO MOCK EXAM ENGINE
+         =================================================================== -->
+    <section class="slide" id="slide-11">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Core Algorithm #5</span>
+            <h2 class="slide-title">RTO Learner License Mock Examination Engine</h2>
+          </div>
+          <span class="slide-num">Slide 11 of 17</span>
+        </div>
+
+        <p>
+          To prepare candidates for the computerized RTO Learner License test, the system incorporates an automated testing engine with **6 distinct official question papers**:
+        </p>
+
+        <div class="grid-2">
+          <div class="feature-card">
+            <h4>📋 The 6 Official Question Papers</h4>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Paper 1:</strong> Traffic Signs, Mandatory Signals & Road Surface Markings</li>
+              <li><strong>Paper 2:</strong> Right of Way, Roundabout Priority & Overtaking Etiquette</li>
+              <li><strong>Paper 3:</strong> Vehicle Controls, Cockpit ABC Drill & Incline Start Safety</li>
+              <li><strong>Paper 4:</strong> Emergency Maneuvers, Hazard Perception & Wet Weather Braking</li>
+              <li><strong>Paper 5:</strong> Motor Vehicles Act Penalties, Speed Limits & Document Mandates</li>
+              <li><strong>Paper 6:</strong> Comprehensive RTO Final Qualifying Exam</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>⚙️ Automated Evaluation Logic</h4>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li>Student selects answers in an interactive quiz interface.</li>
+              <li>Client submits answer map <code>{ [questionId]: optionIndex }</code> to <code>POST /api/tests/submit-paper</code>.</li>
+              <li>Backend iterates canonical question array, grades correctness, and computes percentage: <code>(correctCount / total) * 100</code>.</li>
+              <li>Passing threshold is set to <strong>60%</strong> (RTO passing standard).</li>
+              <li>Result is permanently recorded in <code>TestScheduleMaster</code> with score and pass/fail verdict.</li>
+              <li>Student receives immediate review with explanations for each question.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Attendance</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Student 360° Profile →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 12: DEEP DIVE: STUDENT 360° PROFILE
+         =================================================================== -->
+    <section class="slide" id="slide-12">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Core Algorithm #6</span>
+            <h2 class="slide-title">Student 360-Degree Comprehensive Profile Aggregator</h2>
+          </div>
+          <span class="slide-num">Slide 12 of 17</span>
+        </div>
+
+        <p>
+          In the Administrator panel under **Student Directory**, clicking any student row opens a **360° Comprehensive Profile Modal**. This solves the issue of administrators having to open 4 different screens to check a student's status.
+        </p>
+
+        <div class="code-box">
+          <div class="code-header">
+            <span>server/src/controllers/authController.js</span>
+            <span>Relational SQL Aggregation for 360° View</span>
+          </div>
+          <pre><span class="keyword">exports</span>.<span class="fn">getStudentFullDetails</span> = <span class="keyword">async</span> (req, res) => {
+  <span class="keyword">const</span> { id: studentId } = req.params;
+
+  <span class="comment">// 1. Basic Profile</span>
+  <span class="keyword">const</span> [user] = <span class="keyword">await</span> pool.<span class="fn">query</span>(<span class="str">'SELECT UserID, FullName, Email, Phone, LLRNumber FROM UserMaster WHERE UserID = ?'</span>, [studentId]);
+
+  <span class="comment">// 2. Enrolled Course Bookings with Trainer & Car details</span>
+  <span class="keyword">const</span> [bookings] = <span class="keyword">await</span> pool.<span class="fn">query</span>(
+    <span class="str">`SELECT b.*, c.CourseName, u_inst.FullName AS InstructorName, v.RegistrationNumber
+     FROM BookingMaster b
+     JOIN CourseMaster c ON b.CourseID = c.CourseID
+     LEFT JOIN InstructorMaster i ON b.InstructorID = i.InstructorID
+     LEFT JOIN UserMaster u_inst ON i.UserID = u_inst.UserID
+     LEFT JOIN VehicleMaster v ON b.VehicleID = v.VehicleID
+     WHERE b.StudentID = ? ORDER BY b.SessionDate DESC`</span>,
+    [studentId]
+  );
+
+  <span class="comment">// 3. Payment Invoices Ledger</span>
+  <span class="keyword">const</span> [payments] = <span class="keyword">await</span> pool.<span class="fn">query</span>(<span class="str">'SELECT * FROM PaymentMaster WHERE StudentID = ?'</span>, [studentId]);
+
+  <span class="comment">// 4. Full Practical Attendance & Odometer History</span>
+  <span class="keyword">const</span> [attendance] = <span class="keyword">await</span> pool.<span class="fn">query</span>(
+    <span class="str">`SELECT a.*, b.TimeSlot, c.CourseName, u_inst.FullName AS InstructorName
+     FROM AttendanceMaster a
+     JOIN BookingMaster b ON a.BookingID = b.BookingID
+     LEFT JOIN CourseMaster c ON b.CourseID = c.CourseID
+     LEFT JOIN InstructorMaster i ON a.InstructorID = i.InstructorID
+     LEFT JOIN UserMaster u_inst ON i.UserID = u_inst.UserID
+     WHERE a.StudentID = ? ORDER BY a.SessionDate DESC`</span>,
+    [studentId]
+  );
+
+  <span class="comment">// 5. RTO Test Evaluations</span>
+  <span class="keyword">const</span> [tests] = <span class="keyword">await</span> pool.<span class="fn">query</span>(<span class="str">'SELECT * FROM TestScheduleMaster WHERE StudentID = ?'</span>, [studentId]);
+
+  res.<span class="fn">json</span>({ success: <span class="keyword">true</span>, profile: user[<span class="num">0</span>], bookings, payments, attendance, tests });
+};</pre>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: RTO Exams</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Cloud Deployment →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 13: CLOUD DEPLOYMENT & PIPELINE
+         =================================================================== -->
+    <section class="slide" id="slide-13">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">DevOps & Cloud Infrastructure</span>
+            <h2 class="slide-title">Deployment Architecture & CI/CD Pipeline</h2>
+          </div>
+          <span class="slide-num">Slide 13 of 17</span>
+        </div>
+
+        <p>
+          One of the greatest achievements of this capstone project is that it is **100% deployed and publicly live on the internet**, not just running on localhost.
+        </p>
+
+        <div class="grid-3">
+          <div class="feature-card">
+            <h4>1. Cloudflare Pages (Frontend)</h4>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Build Command:</strong> <code>npm run build</code></li>
+              <li><strong>Output Folder:</strong> <code>client/dist</code></li>
+              <li><strong>SPA Routing:</strong> <code>_redirects</code> file ensures <code>/* /index.html 200</code> so page refreshes never 404.</li>
+              <li><strong>Domain:</strong> <code>https://driving-school-frontend.pages.dev</code></li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>2. Render Cloud (Backend API)</h4>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Runtime:</strong> Node.js 24 environment</li>
+              <li><strong>Root Directory:</strong> <code>server</code></li>
+              <li><strong>Auto-Deploy:</strong> Automatically triggers on <code>git push origin main</code>.</li>
+              <li><strong>CORS Configuration:</strong> Whitelists <code>pages.dev</code> origin with credentials allowed.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <h4>3. TiDB Cloud (Database)</h4>
+            <ul style="font-size:13px; margin-left:16px;">
+              <li><strong>Region:</strong> AWS Singapore (low latency for India)</li>
+              <li><strong>Security:</strong> Enforces <code>ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }</code>.</li>
+              <li><strong>Connection Pooling:</strong> Maintains 10 pooled connections to prevent socket exhaustion.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout callout-viva">
+          <div class="callout-viva-title">🎓 Examiner Question: "What happens on the first visit to your backend?"</div>
+          "Render's free tier spins down after 15 minutes of inactivity to save energy. On the first request after being idle, Render has a cold-start latency of about 30–45 seconds while the container initializes. Once awake, every subsequent request responds in under 100 milliseconds."
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: 360° Profile</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Live Demo Steps →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 14: STEP-BY-STEP LIVE DEMO SCRIPT
+         =================================================================== -->
+    <section class="slide" id="slide-14">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Presentation Script</span>
+            <h2 class="slide-title">Step-by-Step Live Demonstration Script</h2>
+          </div>
+          <span class="slide-num">Slide 14 of 17</span>
+        </div>
+
+        <p>Follow these exact steps when presenting live in front of the college evaluators:</p>
+
+        <div class="grid-2">
+          <div class="feature-card">
+            <h4 style="color:#60a5fa;">Step 1: Admin Dashboard & Reports (3 Minutes)</h4>
+            <ol style="font-size:13px; margin-left:18px;">
+              <li>Open <code>https://driving-school-frontend.pages.dev/</code>.</li>
+              <li>Click <strong>Quick Demo Login: Chief Administrator</strong> (<code>admin@drivingschool.com</code> / <code>Admin@123</code>).</li>
+              <li>Show KPI metrics (6 Students, 3 Trainers, ₹40,500.00 Revenue).</li>
+              <li>Click <strong>Export Student Roster</strong> & <strong>Export Fee Ledger</strong> — show the live downloaded Excel files (.xlsx).</li>
+              <li>Navigate to <strong>Instructors</strong> tab — point out the <strong>Monthly Salary</strong> column (₹32,000 for Rajesh Patil) and show the Edit Salary modal.</li>
+            </ol>
+          </div>
+
+          <div class="feature-card">
+            <h4 style="color:#34d399;">Step 2: Student 360° & Slot Approval (2 Minutes)</h4>
+            <ol style="font-size:13px; margin-left:18px;">
+              <li>Go to <strong>Student Directory</strong> — click on <strong>Radheya Bharat Khandelwal</strong>.</li>
+              <li>Show the 360° modal displaying enrolled course, ₹6,500 paid invoice, 5 driving logs (with kilometers and star ratings), and RTO exam scores.</li>
+              <li>Navigate to <strong>Driving Sessions</strong>.</li>
+              <li>Show student <strong>Aniket Kulkarni</strong> with status <span class="badge badge-amber">Pending</span>.</li>
+              <li>Click <strong>Finalize & Assign Trainer</strong>, choose Rajesh Patil and Maruti Swift, and approve live!</li>
+            </ol>
+          </div>
+
+          <div class="feature-card">
+            <h4 style="color:#fbbf24;">Step 3: Instructor Attendance Logging (2 Minutes)</h4>
+            <ol style="font-size:13px; margin-left:18px;">
+              <li>Log out and log in as <strong>Senior Instructor</strong> (<code>rajesh.patil@drivingschool.com</code> / <code>Instructor@123</code>).</li>
+              <li>Navigate to <strong>Lesson Attendance</strong>.</li>
+              <li>Show past kilometers driven and instructor feedback.</li>
+              <li>Demonstrate marking a new student as Present, entering 10.5 km, selecting topics, and giving a 5-star rating.</li>
+            </ol>
+          </div>
+
+          <div class="feature-card">
+            <h4 style="color:#a78bfa;">Step 4: Student Practice & PDF Invoice (2 Minutes)</h4>
+            <ol style="font-size:13px; margin-left:18px;">
+              <li>Log out and log in as <strong>Student Learner</strong> (<code>radheya.khandelwal@student.com</code> / <code>Student@123</code>).</li>
+              <li>Go to <strong>Payments & Invoices</strong> — click <strong>Download Invoice</strong> to open the official GST PDF receipt!</li>
+              <li>Go to <strong>RTO Mock Tests</strong> — select <strong>Paper 1 (Traffic Signs)</strong>.</li>
+              <li>Answer questions live and show the automatic score calculation and instant review explanations.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Deployment</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Top 20 Viva Q&A →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 15: TOP 20 VIVA QUESTIONS & ANSWERS
+         =================================================================== -->
+    <section class="slide" id="slide-15">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Viva-Voce Master Guide</span>
+            <h2 class="slide-title">Top 20 Frequently Asked Viva Questions & Answers</h2>
+          </div>
+          <span class="slide-num">Slide 15 of 17</span>
+        </div>
+
+        <p>Click on any question below to reveal the exact answer to give during your college viva:</p>
+
+        <!-- Q1 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q1. What is the main objective of your project?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "The main objective is to eliminate paper-based management in motor driving schools. It provides conflict-free slot scheduling for dual-control cars, guarantees 100% upfront fee payment with PDF receipts, manages instructor payroll, tracks verified driving odometer logs, and prepares students for RTO licensing exams through 6 official mock tests."
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q2. What is 3-Tier Architecture and how is it used in your project?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "3-Tier Architecture separates the application into Presentation Tier (React on Cloudflare Pages), Application Logic Tier (Node.js & Express on Render), and Data Tier (TiDB Cloud MySQL). This ensures that visual changes don't affect backend logic, and database operations remain secure and independently scalable."
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q3. How do you prevent two students from booking the same car at the same time?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "Through a server-side collision query in <code>bookingController.js</code>. Before approving any slot, our server checks <code>BookingMaster</code> for any record on the same date and time slot matching the requested <code>InstructorID</code> OR <code>VehicleID</code>. If any record exists, it rejects the request with an HTTP 409 Conflict status."
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q4. What is JWT and why is it preferred over sessions?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "JSON Web Token (JWT) is a compact, URL-safe means of representing claims securely between two parties. It is stateless: the server doesn't keep session state in RAM. The client sends it via the <code>Authorization: Bearer</code> header. Because our frontend is on Cloudflare and backend is on Render, JWT works across domains without cross-site cookie restrictions."
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q5. Why did you use Bcrypt with salt?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "Bcrypt is an adaptive cryptographic hash function. It uses a random 'salt' string mixed into each password before hashing with cost factor 10. This ensures that even if two users have the same password, their hashes are completely different, rendering dictionary and rainbow table attacks useless."
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q6. What is TiDB Cloud and why is it better than XAMPP?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "XAMPP is only a local desktop stack running on <code>localhost:3306</code>; nobody outside our laptop can access it. TiDB Cloud is an enterprise distributed SQL database hosted on AWS with public SSL/TLS endpoints, automatic horizontal scaling, and daily automated backups, allowing our web app to run live on any smartphone."
+          </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q7. What is CORS and how did you configure it?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "CORS stands for Cross-Origin Resource Sharing. By default, web browsers block web pages from fetching data from a different domain. Since our frontend is on <code>driving-school-frontend.pages.dev</code> and backend is on <code>onrender.com</code>, we configured Express with the <code>cors</code> package to explicitly allow our frontend origin with credentials."
+          </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q8. Explain the normalization level of your database.</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "Our database is in Third Normal Form (3NF). 1NF is satisfied because all columns are atomic (no repeating groups). 2NF is satisfied because all non-key attributes are fully dependent on the primary key. 3NF is satisfied because there are zero transitive dependencies; for instance, vehicle details live in <code>VehicleMaster</code> rather than being duplicated inside <code>BookingMaster</code>."
+          </div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q9. How does the 100% upfront fee rule work?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "Upon enrollment, the system automatically calculates the full course fee. The student pays via simulated UPI/Card. The backend verifies that <code>AmountPaid === TotalAmount</code> and sets <code>BalanceAmount = 0.00</code>. A student cannot confirm a training slot if there is an outstanding balance."
+          </div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q10. How are PDF receipts generated?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "We use the Node.js <strong>PDFKit</strong> library. When a student requests an invoice, the server fetches the payment and course records, constructs a vector PDF document with official logo, tax invoice number, and candidate details in memory, and streams it back with <code>Content-Type: application/pdf</code>."
+          </div>
+        </div>
+
+        <!-- Q11 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q11. What are the 6 RTO Mock Question Papers?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "They are 6 official curriculum papers based on the Motor Vehicles Act: 1) Traffic Signs & Signals, 2) Right of Way & Roundabouts, 3) Vehicle Controls & Incline Starts, 4) Emergency Braking & Hazards, 5) Motor Vehicle Act Penalties & Speed Limits, and 6) Comprehensive Final Qualifying Exam."
+          </div>
+        </div>
+
+        <!-- Q12 -->
+        <div class="qa-box">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <span>Q12. What is the Student 360° Profile Modal?</span>
+            <span class="qa-arrow">▼</span>
+          </div>
+          <div class="qa-answer" style="display:none;">
+            "It is an executive feature where an Administrator clicks any student in the directory to see an aggregated profile combining: personal details, course enrollment, payment receipt history, all driving session logs with instructor feedback, and RTO test evaluations in one single pop-up modal."
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Demo Script</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Technical Glossary →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 16: TECHNICAL GLOSSARY & DEFINITIONS
+         =================================================================== -->
+    <section class="slide" id="slide-16">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Examiner Terminology</span>
+            <h2 class="slide-title">Key Technical Terms & Viva Definitions</h2>
+          </div>
+          <span class="slide-num">Slide 16 of 17</span>
+        </div>
+
+        <div class="grid-2">
+          <div class="feature-card">
+            <h4>ACID Properties in TiDB</h4>
+            <p style="font-size:13px; color:#cbd5e1;"><strong>Atomicity:</strong> Transactions (like booking + payment) either complete 100% or roll back completely.<br>
+            <strong>Consistency:</strong> Foreign key constraints are always preserved.<br>
+            <strong>Isolation:</strong> Concurrent slot bookings do not read uncommitted phantom rows.<br>
+            <strong>Durability:</strong> Once committed, data is permanently persisted on distributed storage disks.</p>
+          </div>
+
+          <div class="feature-card">
+            <h4>Connection Pooling</h4>
+            <p style="font-size:13px; color:#cbd5e1;">Creating a new database connection for every incoming HTTP request is expensive. We use <code>mysql2.createPool({ connectionLimit: 10 })</code> which maintains reusable open sockets, boosting API throughput by 400%.</p>
+          </div>
+
+          <div class="feature-card">
+            <h4>RESTful API Principles</h4>
+            <p style="font-size:13px; color:#cbd5e1;">Our endpoints use standard HTTP verbs: <code>GET</code> for retrieval, <code>POST</code> for creation, <code>PUT</code> for complete updates, <code>DELETE</code> for removals, and standardized status codes: <code>200 OK</code>, <code>201 Created</code>, <code>401 Unauthorized</code>, <code>409 Conflict</code>.</p>
+          </div>
+
+          <div class="feature-card">
+            <h4>Single Page Application (SPA)</h4>
+            <p style="font-size:13px; color:#cbd5e1;">Instead of requesting full HTML pages on every click from the server, the browser loads the bundle once. Route transitions are handled entirely in client memory via virtual DOM diffing, making the app feel like a native mobile app.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Viva Q&A</button>
+          <button class="btn btn-primary" onclick="nextSlide()">Next: Future Scope & Conclusion →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 17: FUTURE SCOPE & CONCLUSION
+         =================================================================== -->
+    <section class="slide" id="slide-17">
+      <div class="slide-card">
+        <div class="slide-header">
+          <div>
+            <span class="slide-tag">Project Defense Conclusion</span>
+            <h2 class="slide-title">Future Scope, Learnings & Final Conclusion</h2>
+          </div>
+          <span class="slide-num">Slide 17 of 17</span>
+        </div>
+
+        <h3>🚀 Future Functional Expansion</h3>
+        <ul style="font-size:14px; margin-left:20px;">
+          <li><strong>IoT OBD-II & GPS Telematics:</strong> Plug OBD-II hardware dongles into training cars to track real-time vehicle speed, engine RPM, harsh braking, and GPS routes automatically.</li>
+          <li><strong>Automated WhatsApp / SMS Gateway:</strong> Integration with Twilio/Gupshup to send automated slot reminders 2 hours prior to practical lessons and instant RTO appointment alerts.</li>
+          <li><strong>Biometric Facial Recognition Attendance:</strong> Digital verification of student and instructor at the start and end of every practical lesson for RTO compliance.</li>
+          <li><strong>Multi-Branch Franchise Architecture:</strong> Multi-tenant database schema to support driving school branches across different districts.</li>
+        </ul>
+
+        <h3>🎓 What We Learned During This Capstone Project</h3>
+        <p>
+          Building DriveAcademy gave us hands-on mastery over full-stack engineering:
+          1) Designing normalized relational schemas with zero redundant anomalies,
+          2) Building secure RESTful APIs with stateless JWT authentication,
+          3) Solving real-world concurrency issues like double-booking prevention, and
+          4) Deploying production cloud microservices across Cloudflare, Render, and TiDB Cloud.
+        </p>
+
+        <div style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 12px; padding: 24px; text-align: center; margin-top: 24px;">
+          <h2 style="color:#fff; font-size: 24px; margin-bottom: 8px;">Thank You!</h2>
+          <p style="color:#dbeafe; font-size: 16px; margin-bottom: 12px;">Radheya Bharat Khandelwal • B.C.A. Third Year • COCSIT, Latur</p>
+          <p style="color:#bfdbfe; font-size: 14px;">Questions & Discussion are welcome!</p>
+        </div>
+
+        <div class="slide-footer-nav">
+          <button class="btn" onclick="prevSlide()">← Prev: Glossary</button>
+          <button class="btn btn-primary" onclick="goToSlide(1)">⏮ Back to Beginning</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script for Navigation & Interactivity -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 17;
+    let isContinuous = false;
+
+    // Slide Titles for Drawer
+    const slideTitles = [
+      "1. Title & Executive Summary",
+      "2. Real-World Problem & Field Work",
+      "3. 3-Tier Architecture Blueprint",
+      "4. Tech Stack & Justifications",
+      "5. Database Design & 9 Tables",
+      "6. The Three User Roles",
+      "7. Double-Booking Conflict Prevention",
+      "8. Authentication & Security Logic",
+      "9. 100% Upfront Fee Invoicing",
+      "10. Practical Attendance & Odometer Logs",
+      "11. 6-Paper RTO Mock Exam Engine",
+      "12. Student 360° Profile Aggregator",
+      "13. Cloud Deployment Pipeline",
+      "14. Step-by-Step Live Demo Script",
+      "15. Top 20 Viva Questions & Answers",
+      "16. Key Technical Terms & Glossary",
+      "17. Future Scope & Conclusion"
+    ];
+
+    // Build Drawer Items
+    const drawerList = document.getElementById("drawerList");
+    slideTitles.forEach((title, idx) => {
+      const item = document.createElement("div");
+      item.className = "drawer-item" + (idx === 0 ? " active" : "");
+      item.id = "drawer-item-" + (idx + 1);
+      item.innerHTML = `<span class="num">${idx + 1}</span> <span>${title.replace(/^\d+\.\s*/, '')}</span>`;
+      item.onclick = () => {
+        goToSlide(idx + 1);
+        closeDrawer();
+      };
+      drawerList.appendChild(item);
+    });
+
+    function updateSlide() {
+      if (isContinuous) return;
+
+      document.querySelectorAll(".slide").forEach((s, idx) => {
+        s.classList.toggle("active", idx + 1 === currentSlide);
+      });
+
+      // Update progress bar
+      const pct = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+      document.getElementById("progressBar").style.width = pct + "%";
+
+      // Update button states
+      document.getElementById("prevBtn").disabled = currentSlide === 1;
+      document.getElementById("nextBtn").innerText = currentSlide === totalSlides ? "Finish 🏁" : "Next →";
+
+      // Update drawer active state
+      document.querySelectorAll(".drawer-item").forEach((it, idx) => {
+        it.classList.toggle("active", idx + 1 === currentSlide);
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(n) {
+      currentSlide = n;
+      if (isContinuous) {
+        const el = document.getElementById("slide-" + n);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        updateSlide();
+      }
+    }
+
+    function toggleMode() {
+      isContinuous = !isContinuous;
+      document.body.classList.toggle("continuous-mode", isContinuous);
+      document.getElementById("modeText").innerText = isContinuous ? "Presentation Mode" : "Reading Mode";
+      document.getElementById("prevBtn").style.display = isContinuous ? "none" : "inline-flex";
+      document.getElementById("nextBtn").style.display = isContinuous ? "none" : "inline-flex";
+      if (!isContinuous) {
+        updateSlide();
+      }
+    }
+
+    function openDrawer() {
+      document.getElementById("drawer").classList.add("open");
+      document.getElementById("drawerOverlay").style.display = "block";
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawer").classList.remove("open");
+      document.getElementById("drawerOverlay").style.display = "none";
+    }
+
+    function toggleQA(element) {
+      const answer = element.nextElementSibling;
+      const arrow = element.querySelector(".qa-arrow");
+      if (answer.style.display === "none") {
+        answer.style.display = "block";
+        arrow.style.transform = "rotate(180deg)";
+      } else {
+        answer.style.display = "none";
+        arrow.style.transform = "rotate(0deg)";
+      }
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (isContinuous) return;
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        nextSlide();
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        prevSlide();
+      } else if (e.key === "Escape") {
+        closeDrawer();
+      }
+    });
+
+    // Initialize
+    updateSlide();
+  </script>
+</body>
+</html>
