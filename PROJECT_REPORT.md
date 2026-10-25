@@ -330,6 +330,10 @@ A field survey was conducted across three registered motor driving training inst
 
 ## 4.2 Entity-Relationship (E-R) Diagram
 
+![Figure 4.2: Entity-Relationship (E-R) Diagram](er_diagram.png)
+*Figure 4.2: Entity-Relationship (E-R) Diagram for Driving School Management System (300 DPI High Resolution)*
+
+### Mermaid Entity-Relationship Schema
 ```mermaid
 erDiagram
     UserMaster ||--o| InstructorMaster : "1:1 assigns"

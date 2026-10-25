@@ -577,6 +577,16 @@ def create_report():
     style_table(s_tbl, u_widths, u_headers, s_data)
 
     add_h2("4.2 Entity-Relationship (E-R) Diagram")
+    er_img_path = r"c:\Users\radhe\OneDrive\Desktop\capstone project\er_diagram.png"
+    if os.path.exists(er_img_path):
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.paragraph_format.space_before = Pt(8)
+        p_img.paragraph_format.space_after = Pt(8)
+        run_img = p_img.add_run()
+        run_img.add_picture(er_img_path, width=Inches(6.6))
+        add_p("Figure 4.2: Entity-Relationship (E-R) Diagram for Driving School Management System", align=WD_ALIGN_PARAGRAPH.CENTER, italic=True, size=11, space_before=2, space_after=12)
+
     er_text = (
         "The Entity-Relationship (E-R) model illustrates the high-cohesion, low-coupling design of the DriveAcademy system:\n\n"
         "1. UserMaster (1) : (1) InstructorMaster — Each certified instructor account is tied to an authentic User profile.\n"
