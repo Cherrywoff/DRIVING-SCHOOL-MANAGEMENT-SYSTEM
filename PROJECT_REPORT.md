@@ -428,6 +428,77 @@ erDiagram
 
 ---
 
+## 4.3 Data Flow Diagram (First Level)
+
+![Figure 4.3: First Level Data Flow Diagram (Level 1 DFD)](dfd_level1_diagram.png)
+*Figure 4.3: First Level Data Flow Diagram (Level 1 DFD) for Driving School Management System (300 DPI High Resolution)*
+
+### Mermaid Level 1 Data Flow Diagram
+```mermaid
+graph TD
+    %% External Entities
+    subgraph External_Entities ["External Entities"]
+        Student["Student / Learner"]
+        Instructor["Certified Instructor"]
+        Admin["Chief Administrator"]
+    end
+
+    %% Level 1 Processes
+    subgraph Processes ["Level 1 Processes"]
+        P1["1.0 User Authentication & Token Issuance"]
+        P2["2.0 Course Enrollment & 100% Upfront Billing"]
+        P3["3.0 Slot Scheduling & Conflict Prevention Engine"]
+        P4["4.0 Practical Attendance & Odometer Logging"]
+        P5["5.0 RTO Mock Quiz & Automated Grading Engine"]
+        P6["6.0 Executive Analytics & Excel Report Streamer"]
+    end
+
+    %% Data Stores
+    subgraph Data_Stores ["Data Stores"]
+        D1[("D1: UserMaster")]
+        D2[("D2: CourseMaster")]
+        D3[("D3: PaymentMaster")]
+        D4[("D4: BookingMaster")]
+        D5[("D5: VehicleMaster")]
+        D6[("D6: InstructorMaster")]
+        D7[("D7: AttendanceMaster")]
+        D8[("D8: TestScheduleMaster")]
+    end
+
+    %% Data Flows
+    Student -->|"Login Credentials (Email, Pass)"| P1
+    P1 -->|"Verify Salted Hash"| D1
+    P1 -->|"JWT Token & Role Profile"| Student
+
+    Student -->|"Course Selection & UPI Fee"| P2
+    P2 -->|"Fetch Course Fee"| D2
+    P2 -->|"Commit Paid Invoice (INV-2026)"| D3
+    P2 -->|"Official PDF Receipt"| Student
+
+    Student -->|"Slot Preference (Date/Time)"| P3
+    P3 -->|"Pending Booking Record"| D4
+    Admin -->|"Assign Trainer & Vehicle"| P3
+    P3 -->|"Check Car Availability"| D5
+    P3 -->|"Check Trainer Clash"| D6
+    P3 -->|"Approved Confirmed Slot"| D4
+
+    Instructor -->|"Mark Attendance, KM & Rating"| P4
+    P4 -->|"Commit Practical Driving Log"| D7
+    P4 -->|"Feedback & Competency Rating"| Student
+
+    Student -->|"Submit Exam Answers (Papers 1-6)"| P5
+    P5 -->|"Log Score & Pass/Fail Status"| D8
+    P5 -->|"Score %, Explanations & Review"| Student
+
+    Admin -->|"Request Rosters / Financial Audit"| P6
+    D1 -.->|"Read Student Roster"| P6
+    D3 -.->|"Read Fee Collections"| P6
+    D4 -.->|"Read Session Status"| P6
+    P6 -->|"Stream Excel Reports (.xlsx)"| Admin
+```
+
+---
+
 <div style="page-break-after: always;"></div>
 
 # CHAPTER 5: USER INTERFACE & SYSTEM DESIGNING

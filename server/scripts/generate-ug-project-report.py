@@ -599,7 +599,17 @@ def create_report():
     )
     add_p(er_text)
 
-    add_h2("4.3 Data Flow Diagrams (DFD)")
+    add_h2("4.3 Data Flow Diagram (First Level)")
+    dfd_img_path = r"c:\Users\radhe\OneDrive\Desktop\capstone project\dfd_level1_diagram.png"
+    if os.path.exists(dfd_img_path):
+        p_dfd_img = doc.add_paragraph()
+        p_dfd_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_dfd_img.paragraph_format.space_before = Pt(8)
+        p_dfd_img.paragraph_format.space_after = Pt(8)
+        run_dfd = p_dfd_img.add_run()
+        run_dfd.add_picture(dfd_img_path, width=Inches(6.6))
+        add_p("Figure 4.3: First Level Data Flow Diagram (Level 1 DFD) for Driving School Management System", align=WD_ALIGN_PARAGRAPH.CENTER, italic=True, size=11, space_before=2, space_after=12)
+
     dfd_text = (
         "A. Level 0 (Context-Level DFD):\n"
         "External entities (Student, Instructor, Administrator) interact with the centralized Driving School Management System. "
@@ -612,7 +622,8 @@ def create_report():
         "• Process 2.0: Course Enrollment & Upfront Fee Processing (creates 100% cleared records in PaymentMaster).\n"
         "• Process 3.0: Conflict-Free Slot Finalization (queries BookingMaster to verify instructor and car availability before approval).\n"
         "• Process 4.0: Practical Attendance Logging (records kilometers and competency in AttendanceMaster).\n"
-        "• Process 5.0: RTO Mock Quiz Assessment (evaluates question papers against answer keys and stores scores in TestScheduleMaster).\n\n"
+        "• Process 5.0: RTO Mock Quiz Assessment (evaluates question papers against answer keys and stores scores in TestScheduleMaster).\n"
+        "• Process 6.0: Executive Analytics & Excel Report Generation (reads D1, D3, D4, D7 to stream XLSX audit spreadsheets).\n\n"
         "C. Level 2 DFD (Slot Conflict Prevention Sub-System):\n"
         "When an Admin attempts to assign an Instructor and Vehicle to a Pending slot on Date D and TimeSlot T, the algorithm executes "
         "a binary mutex query: 'SELECT COUNT(*) FROM BookingMaster WHERE (InstructorID = ? OR VehicleID = ?) AND SessionDate = ? AND "
