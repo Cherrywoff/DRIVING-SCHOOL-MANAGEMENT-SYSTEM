@@ -42,7 +42,6 @@ export default function LoginPage({ onSwitchToRegister }) {
         <div className="auth-card-header">
           <div className="logo-badge" style={{ margin: '0 auto 16px' }}>DS</div>
           <h2>Driving School System</h2>
-          <p>COCSIT Capstone Project Portal</p>
         </div>
 
         {error && (
@@ -122,10 +121,10 @@ export default function LoginPage({ onSwitchToRegister }) {
               type="button"
               className="btn btn-secondary btn-sm"
               style={{ justifyContent: 'flex-start' }}
-              onClick={() => handleQuickLogin('radheya.khandelwal@student.com', 'Student@123')}
+              onClick={() => handleQuickLogin('xyz@student.com', 'Student@123')}
             >
               <KeyRound size={14} color="#fbbf24" />
-              <span>Student (Radheya): <strong>radheya.khandelwal@student.com</strong></span>
+              <span>Student (xyz): <strong>xyz@student.com</strong></span>
             </button>
           </div>
         </div>

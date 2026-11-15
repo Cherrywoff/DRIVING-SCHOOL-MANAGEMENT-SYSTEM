@@ -99,7 +99,7 @@ app.use((err, req, res, next) => {
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(` DRIVING SCHOOL MANAGEMENT SYSTEM API (COCSIT BCA) `);
+    console.log(` DRIVING SCHOOL MANAGEMENT SYSTEM API (BCA CAPSTONE) `);
     console.log(` Server running on: http://localhost:${PORT}`);
     console.log(` Connected to TiDB: ${process.env.DB_HOST}`);
     console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);

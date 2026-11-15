@@ -204,10 +204,10 @@ async function seedRichHistory() {
         address: 'Khadgaon Road, Latur',
         createdAt: '2026-07-15 10:15:00'
       },
-      // 5. Student 1: Radheya Bharat Khandelwal
+      // 5. Student 1: xyz
       {
-        name: 'Radheya Bharat Khandelwal',
-        email: 'radheya.khandelwal@student.com',
+        name: 'xyz',
+        email: 'xyz@student.com',
         hash: studentHash,
         role: 'Student',
         phone: '9423011223',
@@ -352,7 +352,7 @@ async function seedRichHistory() {
     console.log('7. Inserting Student Payment Records...');
     const payments = [
       {
-        email: 'radheya.khandelwal@student.com',
+        email: 'xyz@student.com',
         code: 'COURSE-LMV-MANUAL',
         inv: 'INV-2026-0001',
         amount: 6500.00,
@@ -441,12 +441,12 @@ async function seedRichHistory() {
     // --- STUDENT 1: Radheya Bharat Khandelwal (Advanced Manual Learner) ---
     // Session 1: Cockpit Drill & ABC Controls (Completed)
     const b1 = await createBooking(
-      'radheya.khandelwal@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
+      'xyz@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
       '2026-09-05', '07:00:00 - 08:00:00', 'Completed',
       'Day 1: Cockpit drill, seat & mirror adjustments, clutch pedal biting point',
       '2026-09-02 10:00:00'
     );
-    await logAttendance(b1, 'radheya.khandelwal@student.com', instRajesh, '2026-09-05', 'Present', 8.50,
+    await logAttendance(b1, 'xyz@student.com', instRajesh, '2026-09-05', 'Present', 8.50,
       'Cockpit orientation, ABC pedals (Accelerator, Brake, Clutch), smooth start-stop in 1st gear',
       4, 'Excellent clutch control. Smooth start without engine stalling. Very attentive to dashboard gauges.',
       '2026-09-05 08:15:00'
@@ -454,12 +454,12 @@ async function seedRichHistory() {
 
     // Session 2: Gear Shift Progression & Steering (Completed)
     const b2 = await createBooking(
-      'radheya.khandelwal@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
+      'xyz@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
       '2026-09-12', '07:00:00 - 08:00:00', 'Completed',
       'Day 2: Gear changes 1st to 3rd, hand-over-hand steering technique on ring road',
       '2026-09-08 11:00:00'
     );
-    await logAttendance(b2, 'radheya.khandelwal@student.com', instRajesh, '2026-09-12', 'Present', 12.00,
+    await logAttendance(b2, 'xyz@student.com', instRajesh, '2026-09-12', 'Present', 12.00,
       'Up-shifting 1-2-3, progressive braking, left and right turns on Shivaji Nagar ring road',
       5, 'Flawless steering recovery after cornering. Smooth gear transitions and proper mirror checks.',
       '2026-09-12 08:10:00'
@@ -467,12 +467,12 @@ async function seedRichHistory() {
 
     // Session 3: Parallel Parking & Reverse Bay Parking (Completed)
     const b3 = await createBooking(
-      'radheya.khandelwal@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
+      'xyz@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
       '2026-09-20', '07:00:00 - 08:00:00', 'Completed',
       'Day 3: Parallel curb parking, reversing into bays using side mirrors',
       '2026-09-15 09:30:00'
     );
-    await logAttendance(b3, 'radheya.khandelwal@student.com', instRajesh, '2026-09-20', 'Present', 9.20,
+    await logAttendance(b3, 'xyz@student.com', instRajesh, '2026-09-20', 'Present', 9.20,
       'Parallel parking between training cones, 45-degree angle reverse entry, blind spot awareness',
       4, 'Successfully completed parallel parking within the 1-foot curb margin on second attempt.',
       '2026-09-20 08:15:00'
@@ -480,12 +480,12 @@ async function seedRichHistory() {
 
     // Session 4: Hill Start with Handbrake Drill (Completed)
     const b4 = await createBooking(
-      'radheya.khandelwal@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
+      'xyz@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
       '2026-10-02', '07:00:00 - 08:00:00', 'Completed',
       'Day 4: Gradient start on Ambajogai road flyover incline using parking brake',
       '2026-09-28 14:00:00'
     );
-    await logAttendance(b4, 'radheya.khandelwal@student.com', instRajesh, '2026-10-02', 'Present', 14.50,
+    await logAttendance(b4, 'xyz@student.com', instRajesh, '2026-10-02', 'Present', 14.50,
       'Steep incline start, parking brake coordination with clutch bite, avoiding rollback',
       5, 'Zero rollback on 15% incline. Mastered the handbrake clutch coordination. Exam-ready.',
       '2026-10-02 08:20:00'
@@ -493,12 +493,12 @@ async function seedRichHistory() {
 
     // Session 5: Night Driving & Highway Lane Discipline (Completed)
     const b5 = await createBooking(
-      'radheya.khandelwal@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
+      'xyz@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
       '2026-10-15', '18:00:00 - 19:00:00', 'Completed',
       'Day 5: Night driving on Ausa Road highway, high/low beam etiquette, safe overtaking',
       '2026-10-10 16:00:00'
     );
-    await logAttendance(b5, 'radheya.khandelwal@student.com', instRajesh, '2026-10-15', 'Present', 16.80,
+    await logAttendance(b5, 'xyz@student.com', instRajesh, '2026-10-15', 'Present', 16.80,
       'High-beam dipper etiquette, maintaining 3-second gap, lane positioning at 60 km/h',
       5, 'Outstanding confidence in night traffic. Dipped headlights promptly for oncoming traffic.',
       '2026-10-15 19:10:00'
@@ -506,7 +506,7 @@ async function seedRichHistory() {
 
     // Session 6: Upcoming Scheduled Practical Session
     await createBooking(
-      'radheya.khandelwal@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
+      'xyz@student.com', 'COURSE-LMV-MANUAL', instRajesh, carSwift,
       '2026-10-26', '07:00:00 - 08:00:00', 'Scheduled',
       'Day 6: Final RTO H-Track simulation and emergency stopping distance assessment',
       '2026-10-20 10:00:00'
@@ -650,19 +650,19 @@ async function seedRichHistory() {
     await connection.query(
       `INSERT INTO TestScheduleMaster (StudentID, CourseID, TestType, TestDate, TestTime, ScoreObtained, TotalScore, ResultStatus, ExaminerOrInstructorNotes, CreatedAt)
        VALUES (?, ?, 'Theory_Mock_Quiz', '2026-09-18', '11:00:00', 92.00, 100.00, 'Passed', 'Scored 92% on Paper 1 (Traffic Signs) and Paper 2 (Right of Way). Mastered overtaking regulations.', '2026-09-18 11:45:00')`,
-      [uMap['radheya.khandelwal@student.com'], cMap['COURSE-LMV-MANUAL'].id]
+      [uMap['xyz@student.com'], cMap['COURSE-LMV-MANUAL'].id]
     );
 
     await connection.query(
       `INSERT INTO TestScheduleMaster (StudentID, CourseID, TestType, TestDate, TestTime, ScoreObtained, TotalScore, ResultStatus, ExaminerOrInstructorNotes, CreatedAt)
        VALUES (?, ?, 'Practical_Internal_Mock', '2026-10-18', '10:30:00', 88.00, 100.00, 'Passed', 'Internal H-Track evaluation completed with distinction. Zero penalties on gradient start.', '2026-10-18 11:30:00')`,
-      [uMap['radheya.khandelwal@student.com'], cMap['COURSE-LMV-MANUAL'].id]
+      [uMap['xyz@student.com'], cMap['COURSE-LMV-MANUAL'].id]
     );
 
     await connection.query(
       `INSERT INTO TestScheduleMaster (StudentID, CourseID, TestType, TestDate, TestTime, ScoreObtained, TotalScore, ResultStatus, ExaminerOrInstructorNotes, CreatedAt)
        VALUES (?, ?, 'Official_RTO_Test', '2026-11-10', '10:00:00', NULL, 100.00, 'Scheduled', 'Official RTO Latur Practical Driving Test scheduled at Babhalgaon Road RTO track.', '2026-10-20 14:00:00')`,
-      [uMap['radheya.khandelwal@student.com'], cMap['COURSE-LMV-MANUAL'].id]
+      [uMap['xyz@student.com'], cMap['COURSE-LMV-MANUAL'].id]
     );
 
     // Priya: Passed Mock Quiz + Official Test Scheduled

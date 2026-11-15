@@ -41,7 +41,7 @@ export default function DashboardPage({ setActiveTab }) {
       <div className="top-header">
         <div className="page-title">
           <h1>{role} Dashboard</h1>
-          <p>Driving School Management System • COCSIT Autonomous Latur</p>
+          <p>Driving School Management System</p>
         </div>
         <div className="header-actions">
           {role === 'Admin' && (

@@ -133,11 +133,11 @@ async function runVerification() {
     // -------------------------------------------------------------
     // SECTION 4: ROLE 3 - STUDENT LEARNER
     // -------------------------------------------------------------
-    console.log('\n--- 4. Testing Role: Student (radheya.khandelwal@student.com) ---');
+    console.log('\n--- 4. Testing Role: Student (xyz@student.com) ---');
     const studentLogin = await request('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'radheya.khandelwal@student.com', password: 'Student@123' })
+      body: JSON.stringify({ email: 'xyz@student.com', password: 'Student@123' })
     });
     assert(studentLogin.success && studentLogin.token, 'Student authenticated successfully');
     const studentToken = studentLogin.token;

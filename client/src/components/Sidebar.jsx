@@ -54,7 +54,6 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }) {
             <div className="logo-badge">DS</div>
             <div className="logo-text">
               <h2>DriveAcademy</h2>
-              <p>COCSIT Capstone Portal</p>
             </div>
           </div>
           {/* Mobile close toggle */}

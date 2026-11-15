@@ -187,8 +187,8 @@ async function cleanAndResetData() {
         address: 'MIDC Road, Latur'
       },
       {
-        name: 'Radheya Bharat Khandelwal',
-        email: 'radheya.khandelwal@student.com',
+        name: 'xyz',
+        email: 'xyz@student.com',
         hash: studentHash,
         role: 'Student',
         phone: '9423011223',
@@ -270,7 +270,7 @@ async function cleanAndResetData() {
     const dayAfterTomorrow = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
 
     // Student 1: Radheya (Four-Wheeler Manual)
-    const student1Id = userMap['radheya.khandelwal@student.com'];
+    const student1Id = userMap['xyz@student.com'];
     const course1Id = courseMap['COURSE-LMV-MANUAL'];
 
     // Payment Record
