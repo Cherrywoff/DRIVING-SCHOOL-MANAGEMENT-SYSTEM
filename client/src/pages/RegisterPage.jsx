@@ -62,7 +62,7 @@ export default function RegisterPage({ onSwitchToLogin }) {
               name="fullName"
               type="text"
               className="form-input"
-              placeholder="e.g. xyz"
+              placeholder="e.g. Parth Kulkarni"
               value={formData.fullName}
               onChange={handleChange}
               required

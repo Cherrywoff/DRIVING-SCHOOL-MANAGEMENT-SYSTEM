@@ -43,8 +43,8 @@ async function seedData() {
         address: 'MIDC Road, Latur'
       },
       {
-        name: 'xyz',
-        email: 'xyz@student.com',
+        name: 'Parth Kulkarni',
+        email: 'parth.kulkarni@student.com',
         hash: studentHash,
         role: 'Student',
         phone: '9423011223',
@@ -249,7 +249,7 @@ async function seedData() {
 
     // 6. Seed Sample Payments & Bookings for Radheya
     console.log('Seeding Student Enrollment, Booking & Payment records...');
-    const studentRadheyaId = userMap['xyz@student.com'];
+    const studentRadheyaId = userMap['parth.kulkarni@student.com'];
     const courseLmvId = courseMap['COURSE-LMV-MANUAL'];
     const instRajeshId = instUserMap[userMap['rajesh.patil@drivingschool.com']];
     const vehSwiftId = vehicleMap['MH-24-AG-1001'];

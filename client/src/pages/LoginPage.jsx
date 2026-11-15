@@ -121,10 +121,10 @@ export default function LoginPage({ onSwitchToRegister }) {
               type="button"
               className="btn btn-secondary btn-sm"
               style={{ justifyContent: 'flex-start' }}
-              onClick={() => handleQuickLogin('xyz@student.com', 'Student@123')}
+              onClick={() => handleQuickLogin('parth.kulkarni@student.com', 'Student@123')}
             >
               <KeyRound size={14} color="#fbbf24" />
-              <span>Student (xyz): <strong>xyz@student.com</strong></span>
+              <span>Student (Parth Kulkarni): <strong>parth.kulkarni@student.com</strong></span>
             </button>
           </div>
         </div>
