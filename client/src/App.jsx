@@ -3,7 +3,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
 import CoursesPage from './pages/CoursesPage';
 import BookingsPage from './pages/BookingsPage';
 import AttendancePage from './pages/AttendancePage';
@@ -16,7 +15,7 @@ import { Menu } from 'lucide-react';
 
 function MainApp() {
   const { user, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('courses');
   const [isRegistering, setIsRegistering] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -69,7 +68,6 @@ function MainApp() {
       />
 
       <main className="main-content">
-        {activeTab === 'dashboard' && <DashboardPage setActiveTab={setActiveTab} />}
         {activeTab === 'courses' && <CoursesPage setActiveTab={setActiveTab} />}
         {activeTab === 'bookings' && <BookingsPage />}
         {activeTab === 'attendance' && <AttendancePage />}

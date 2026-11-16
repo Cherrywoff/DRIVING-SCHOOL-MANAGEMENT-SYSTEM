@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
-  LayoutDashboard,
   GraduationCap,
   Users,
   Car,
@@ -18,7 +17,6 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }) {
   const { user, logout } = useAuth();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['Admin', 'Instructor', 'Student'] },
     { id: 'courses', label: 'Courses & Fees', icon: GraduationCap, roles: ['Admin', 'Instructor', 'Student'] },
     { id: 'bookings', label: 'Driving Sessions', icon: Calendar, roles: ['Admin', 'Instructor', 'Student'] },
     { id: 'attendance', label: 'Lesson Attendance', icon: ClipboardCheck, roles: ['Admin', 'Instructor', 'Student'] },
